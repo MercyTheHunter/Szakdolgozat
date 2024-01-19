@@ -4,37 +4,59 @@ import customtkinter
 customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("dark-blue")
 
-class MainApp(customtkinter.CTk):
-    def __init__(self):
-        super().__init__()
-        self.geometry(f"{1280}x{720}") #HD
+class App(customtkinter.CTk):
+    width = 1280
+    height = 720
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry(f"{self.width}x{self.height}")
+        self.resizable(False, False)
         self.title("gui.py")
 
-        self.tabview = customtkinter.CTkTabview(self, width=250)
+        # create main frame
+        self.main_frame = customtkinter.CTkFrame(self, corner_radius=0)
+        self.main_frame.grid_columnconfigure(0, weight=1)
+
+        button1 = customtkinter.CTkButton(self.main_frame, text="Neural Operators", command=self.tab_event, width=200)
+        button1.grid(row=1, column=0, padx=30, pady=(15, 15))
+
+        button2 = customtkinter.CTkButton(self.main_frame, text="The Data", command=self.button_test, width=200)
+        button2.grid(row=2, column=0, padx=30, pady=(15, 15))
+
+        button3 = customtkinter.CTkButton(self.main_frame, text="Comparison", command=self.button_test, width=200)
+        button3.grid(row=3, column=0, padx=30, pady=(15, 15))
+
+        button4 = customtkinter.CTkButton(self.main_frame, text="Test", command=self.button_test, width=200)
+        button4.grid(row=4, column=0, padx=30, pady=(15, 15))
+
+        self.login_button = customtkinter.CTkButton(self.main_frame, text="Login", command=self.button_test, width=200)
+        self.login_button.grid(row=5, column=0, padx=30, pady=(15, 15))
+
+        # create tab frame (Another frame for testing)
+        self.tab_frame = customtkinter.CTkFrame(self,corner_radius=0)
+        self.tab_frame.grid_columnconfigure(0, weight=1)
+        
+        self.tabview = customtkinter.CTkTabview(self.tab_frame, width=250)
         self.tabview.grid(row=0, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
         self.tabview.add("Neural Networks and Neural Operators")
         self.tabview.add("The Data")
         self.tabview.add("Comparison")
         self.tabview.add("Test")
+        self.back_button = customtkinter.CTkButton(self.tab_frame, text="Back", command=self.back_event, width=200)
+        self.back_button.grid(row=1, column=0, padx=30, pady=(15, 15))
+    
+    def tab_event(self):
+        self.main_frame.grid_forget()
+        self.tab_frame.grid(row=0, column=0, sticky="ns")
+
+    def back_event(self):
+        self.tab_frame.grid_forget()
+        self.main_frame.grid(row=0, column=0, sticky="ns")
     
     def button_test(self):
         print("CLICK")
-
-    def button_callback(self):
-        app = MainApp()
-
-class SubApp1(customtkinter.CTk):
-    def __init__(self):
-        super().__init__()
-        self.geometry(f"{1280}x{720}") #HD
-        self.title("nn.py")
-
-        button = customtkinter.CTkButton(master=self, text="Back", command=self.button_callback)
-        button.place(relx=0.8, rely=0.8, anchor=RIGHT)
-    
-    def button_callback(self):
-        app = SubApp1()
  
 if __name__ == "__main__":
-    app = MainApp()
+    app = App()
     app.mainloop()
