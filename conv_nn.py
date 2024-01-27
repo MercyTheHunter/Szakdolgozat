@@ -9,6 +9,7 @@ class Conv_NN(nn.Module):
         self.fc1 = nn.Linear(4*4*12,128)
         self.fc2 = nn.Linear(128,64)
         self.fc3 = nn.Linear(64,10)
+        self.dropout = nn.Dropout(0.5)
 
     def forward(self, x):
         batch_size = x.shape[0]
@@ -25,8 +26,12 @@ class Conv_NN(nn.Module):
 
         x = self.fc1(x)
         x = F.relu(x)
+        x = self.dropout(x)
+
         x = self.fc2(x)
         x = F.relu(x)
+        x = self.dropout(x)
+
         x = self.fc3(x)
 
         return x
