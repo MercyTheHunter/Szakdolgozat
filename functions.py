@@ -48,16 +48,6 @@ def make_loaders(batch_size):
     
     return train_loader, valid_loader, test_loader
 
-def example_plot(train_loader):
-    np.set_printoptions(formatter=dict(int=lambda x: f"{x:4}"))
-
-    for images in train_loader:
-        break
-
-    im = make_grid(images[:10],nrow=10)
-    plt.figure(figsize=(10,4))
-    plt.imshow(np.transpose(im.numpy(),(1,2,0)))
-
 def count_parameters(model):
     params = [p.numel() for p in model.parameters()]
     print(sum(params))
@@ -109,8 +99,8 @@ def train_model(model, train_loader, valid_loader, patience, n_epochs):
                 #Print training and validation statistics
         epoch_len = len(str(n_epochs))
         print_msg = (f"[{epoch:>{epoch_len}}/{n_epochs:>{epoch_len}}]" +
-                     f"train_loss: {train_loss:.5f}" +
-                     f"valid_loss: {valid_loss:.5f}")
+                     f"train_loss: {train_loss:.5f} " +
+                     f"valid_loss: {valid_loss:.5f} ")
         print(print_msg)
 
         #Clear lists for the next epoch
@@ -121,14 +111,18 @@ def train_model(model, train_loader, valid_loader, patience, n_epochs):
         #if it has, then it will make a checkpoint of the current model
         early_stopping(valid_loss, model)
 
+        if early_stopping.early_stop:
+            print("Early stopping")
+            break
+
     print(f"Training completed in {time.time()-start_time} seconds")
 
     #Load the last checkpoint with the best model
-    model. load_state_dict(torch.load('checpoint.pt'))
+    model.load_state_dict(torch.load('checkpoint.pt'))
 
     return model, avg_train_losses, avg_valid_losses
 
-def evaluate_model(model, test_loader):
+def evaluate_model(model, test_loader, batch_size):
     torch.manual_seed(42)
 
     criterion = nn.CrossEntropyLoss()
@@ -137,24 +131,87 @@ def evaluate_model(model, test_loader):
     print("Evaluating on:", device)
     start_time = time.time()
 
-    test_acc = 0.0
-    test_num = 0
     test_loss = 0.0
-    with torch.no_grad():
-        for X_test, y_test in test_loader:
+    class_correct = list(0. for i in range(10))
+    class_total = list(0. for i in range(10))
 
-            X_test = X_test.to(device)
-            y_test = y_test.to(device)
-            y_pred = model(X_test)
+    for data, target in test_loader:
+        if len(target.data) != batch_size:
+            break
+        output = model(data) #Forward pass (Calculate predicted outs)
+        loss = criterion(output, target) #Calculate the loss
+        test_loss += loss.item()*data.size(0) #Update test loss
+        _, pred = torch.max(output, 1) #Convert output probabilities to pred
+        correct = np.squeeze(pred.eq(target.data.view_as(pred))) #Compare pred to the truth
+        for i in range(batch_size): #Calculate test accuracy for each class
+            label = target.data[i]
+            class_correct[label] += correct[i].item()
+            class_total[label] += 1
+    #Calculate and print the average test loss
+    test_loss = test_loss / len(test_loader.dataset)
+    print("Test Loss: {:.6f}\n".format(test_loss))
 
-            #Evaluating accuracy
-            predicted = torch.max(y_pred.data,1)[1]
-            test_acc += (predicted == y_test).sum()
-            test_num += 10 #BatchSize
+    for i in range(10):
+        if class_total[i] > 0:
+            print("Test Accuracy of %5s: %2d%% (%2d/%2d)" % (
+                str(i), 100 * class_correct[i] / class_total[i],
+                np.sum(class_correct[i]), np.sum(class_total[i])))
+        else:
+            print("Test Accuracy of %5s: N/A (no training examples)")
 
-            #Evaluating loss
-            loss = criterion(y_pred,y_test)
-            test_loss += loss.item()
+    print("\nTest Accuracy (Overall): %2d%% (%2d/%2d)" % (
+        100. * np.sum(class_correct) / np.sum(class_total),
+        np.sum(class_correct), np.sum(class_total)))
+    
+def example_plot(train_loader):
+    np.set_printoptions(formatter=dict(int=lambda x: f"{x:4}"))
 
-        print(f"\n Test loss: {test_loss:.3f}\n Test accuracy: {test_acc.to(int)}/{test_num} = {(test_acc/test_num)*100:.2f}% \n")
-    print(f"Evaluation completed in {time.time()-start_time} seconds")
+    for images, labels in train_loader:
+        break
+
+    images = images.numpy()
+
+    fig = plt.figure(figsize=(25,4))
+    for idx in np.arange(10):
+        ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
+        ax.imshow(np.squeeze(images[idx]), cmap="gray")
+    plt.show()
+    fig.savefig("example_plot.png", bbox_inches="tight")
+
+def loss_plot(train_loss, valid_loss):
+    #Loss during the training process
+    fig = plt.figure(figsize=(10,8))
+    plt.plot(range(1, len(train_loss)+1), train_loss, label="Training Loss")
+    plt.plot(range(1,len(valid_loss)+1), valid_loss, label="Validation Loss")
+
+    #Lowest validation loss
+    minposs = valid_loss.index(min(valid_loss))+1
+    plt.axvline(minposs, linestyle="--", color="r", label="Early Stopping Checkpoint")
+
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.ylim(0, 0.5)
+    plt.xlim(0, len(train_loss)+1)
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+    fig.savefig("loss_plot.png", bbox_inches="tight")
+
+def sample_test(model, test_loader):
+    for images, labels in test_loader:
+        break
+
+    output = model(images)
+    _, preds = torch.max(output, 1)
+    images = images.numpy()
+
+    fig = plt.figure(figsize=(25,4))
+    for idx in np.arange(20):
+        ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
+        ax.imshow(np.squeeze(images[idx]), cmap="gray")
+        ax.set_title("{} ({})".format(str(preds[idx].item()),
+                                      str(labels[idx].item())),
+                                      color=("g" if preds[idx]==labels[idx] else "r"))
+    plt.show()
+    fig.savefig("sample_test_plot.png", bbox_inches="tight")
