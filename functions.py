@@ -50,7 +50,7 @@ def make_loaders(batch_size):
 
 def count_parameters(model):
     params = [p.numel() for p in model.parameters()]
-    print(sum(params))
+    print(f"The model has {sum(params)} trainable parameters")
 
 def train_model(model, train_loader, valid_loader, patience, n_epochs):
     torch.manual_seed(42)
@@ -162,6 +162,10 @@ def evaluate_model(model, test_loader, batch_size):
     print("\nTest Accuracy (Overall): %2d%% (%2d/%2d)" % (
         100. * np.sum(class_correct) / np.sum(class_total),
         np.sum(class_correct), np.sum(class_total)))
+
+def save_model(model):
+    #TODO
+    print("TODO")
     
 def example_plot(train_loader):
     np.set_printoptions(formatter=dict(int=lambda x: f"{x:4}"))
@@ -182,7 +186,7 @@ def loss_plot(train_loss, valid_loss):
     #Loss during the training process
     fig = plt.figure(figsize=(10,8))
     plt.plot(range(1, len(train_loss)+1), train_loss, label="Training Loss")
-    plt.plot(range(1,len(valid_loss)+1), valid_loss, label="Validation Loss")
+    plt.plot(range(1, len(valid_loss)+1), valid_loss, label="Validation Loss")
 
     #Lowest validation loss
     minposs = valid_loss.index(min(valid_loss))+1
