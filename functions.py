@@ -7,9 +7,18 @@ from torchvision import datasets, transforms
 from torchvision.utils import make_grid
 from pytorchtools import EarlyStopping
 
+import joblib
 import numpy as np
-import matplotlib.pyplot as plt
 import time
+
+import matplotlib.pyplot as plt
+from sklearn.metrics import multilabel_confusion_matrix as mcm
+from sklearn.metrics import classification_report
+from sklearn.model_selection import cross_val_score
+from yellowbrick.classifier import ConfusionMatrix
+from yellowbrick.classifier import ClassPredictionError
+from yellowbrick.classifier import ROCAUC
+
 
 def make_loaders(batch_size):
     torch.manual_seed(42)
@@ -50,7 +59,7 @@ def make_loaders(batch_size):
 
 def count_parameters(model):
     params = [p.numel() for p in model.parameters()]
-    print(f"The model has {sum(params)} trainable parameters")
+    print(f"The model has {sum(params)} trainable parameters\n")
 
 def train_model(model, train_loader, valid_loader, patience, n_epochs):
     torch.manual_seed(42)
@@ -98,7 +107,7 @@ def train_model(model, train_loader, valid_loader, patience, n_epochs):
         
                 #Print training and validation statistics
         epoch_len = len(str(n_epochs))
-        print_msg = (f"[{epoch:>{epoch_len}}/{n_epochs:>{epoch_len}}]" +
+        print_msg = (f"[{epoch:>{epoch_len}}/{n_epochs:>{epoch_len}}] " +
                      f"train_loss: {train_loss:.5f} " +
                      f"valid_loss: {valid_loss:.5f} ")
         print(print_msg)
@@ -112,10 +121,10 @@ def train_model(model, train_loader, valid_loader, patience, n_epochs):
         early_stopping(valid_loss, model)
 
         if early_stopping.early_stop:
-            print("Early stopping")
+            print("Early stopping\n")
             break
 
-    print(f"Training completed in {time.time()-start_time} seconds")
+    print(f"Training completed in {time.time()-start_time} seconds\n")
 
     #Load the last checkpoint with the best model
     model.load_state_dict(torch.load('checkpoint.pt'))
@@ -163,9 +172,14 @@ def evaluate_model(model, test_loader, batch_size):
         100. * np.sum(class_correct) / np.sum(class_total),
         np.sum(class_correct), np.sum(class_total)))
 
-def save_model(model):
-    #TODO
-    print("TODO")
+def save_model(model, model_name):
+    joblib.dump(model, model_name)
+    print(f"Model saved as: {model_name}\n")
+
+def load_model(model_name):
+    model = joblib.load(model_name)
+    print(f"{model_name} has been loaded!\n")
+    return model
     
 def example_plot(train_loader):
     np.set_printoptions(formatter=dict(int=lambda x: f"{x:4}"))
@@ -219,3 +233,5 @@ def sample_test(model, test_loader):
                                       color=("g" if preds[idx]==labels[idx] else "r"))
     plt.show()
     fig.savefig("sample_test_plot.png", bbox_inches="tight")
+
+    
