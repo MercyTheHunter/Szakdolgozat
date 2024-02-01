@@ -67,6 +67,12 @@ class App(customtkinter.CTk):
         self.tabview_2.add("Analyzing The Data")
         self.tabview_2.add("Splitting The Data")
 
+        self.tabview_2.tab("Analyzing The Data").grid_columnconfigure(0, weight=1)
+        self.tabview_2.tab("Analyzing The Data").grid_rowconfigure(0, weight=1)
+        self.image_t2_ep = customtkinter.CTkImage(Image.open(current_path + "/example_plot.png"), size=(854, 480))
+        self.image_t2_ep_label = customtkinter.CTkLabel(self.tabview_2.tab("Analyzing The Data"), text ="", image=self.image_t2_ep)
+        self.image_t2_ep_label.grid(row=0, column=0)
+
         self.tab_frame_3 = customtkinter.CTkFrame(self,corner_radius=0)
         self.tab_frame_3.grid_columnconfigure(0, weight=1)
         self.tab_frame_3.grid_rowconfigure(0, weight=1)
@@ -75,14 +81,13 @@ class App(customtkinter.CTk):
         self.tabview_3.add("A Regular Neural Network")
         self.tabview_3.add("A Neural Network With The FNO")
         self.tabview_3.add("Learning Rate")
+        self.tabview_3.add("Accuracy")
+
         self.tabview_3.tab("Learning Rate").grid_columnconfigure(0, weight=1)
         self.tabview_3.tab("Learning Rate").grid_rowconfigure(0, weight=1)
-        
-        #Image is not linked to the desired tab yet!!!
-        self.image = customtkinter.CTkImage(Image.open(current_path + "/loss_plot.png"), size=(854, 480))
-        self.image_label = customtkinter.CTkLabel(self, text="Learning rate", image=self.image)
-        self.image_label.grid(row=1, column=1)
-        self.tabview_3.add("Accuracy")
+        self.image_t3_lr = customtkinter.CTkImage(Image.open(current_path + "/loss_plot.png"), size=(854, 480))
+        self.image_t3_lr_label = customtkinter.CTkLabel(self.tabview_3.tab("Learning Rate"), text ="", image=self.image_t3_lr)
+        self.image_t3_lr_label.grid(row=0, column=0)
 
         self.tab_frame_4 = customtkinter.CTkFrame(self,corner_radius=0)
         self.tab_frame_4.grid_columnconfigure(0, weight=1)
@@ -91,7 +96,7 @@ class App(customtkinter.CTk):
         self.tabview_4.grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky="nsew")
         self.tabview_4.add("Placeholder")
 
-        #Set defaul values
+        #Set default values
         self.appearance_mode_optionemenu.set("Dark")
         self.scaling_optionemenu.set("100%")
 
@@ -100,8 +105,6 @@ class App(customtkinter.CTk):
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
-    def sidebar_button_event(self):
-        print("sidebar_button click")
     def tab_event_1(self):
         self.tab_frame_2.grid_forget()
         self.tab_frame_3.grid_forget()
