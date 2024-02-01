@@ -23,5 +23,3 @@ func.count_parameters(model)
 func.evaluate_model(model=model, test_loader=test_loader, batch_size=256)
 
 func.sample_test(model=model, test_loader=test_loader)
-
-#func.print_confusion_matrix(model=model, train_loader=train_loader, test_loader=test_loader)
