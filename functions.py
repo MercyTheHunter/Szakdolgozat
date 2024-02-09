@@ -19,8 +19,7 @@ from yellowbrick.classifier import ConfusionMatrix
 from yellowbrick.classifier import ClassPredictionError
 from yellowbrick.classifier import ROCAUC
 
-
-def make_loaders(batch_size):
+def MNIST_make_loaders(batch_size):
     torch.manual_seed(42)
 
     valid_size = 0.2 #The percentage of training set to use as validation
@@ -32,6 +31,80 @@ def make_loaders(batch_size):
                                 transform=transform)
     test_data = datasets.MNIST(root='../Data', 
                                train=False, 
+                               download=True, 
+                               transform=transform)
+    #Obtain the indices from the training set that will be used for validation
+    num_train = len(train_data)
+    indices = list(range(num_train))
+    np.random.shuffle(indices)
+    split = int(np.floor(valid_size * num_train))
+    train_idx, valid_idx = indices[split:], indices[:split]
+
+    #Define the samplers to obtaiun the training and validation batches
+    train_sampler = SubsetRandomSampler(train_idx)
+    valid_sampler = SubsetRandomSampler(valid_idx)
+
+
+    train_loader = DataLoader(train_data,
+                              batch_size=batch_size,
+                              sampler=train_sampler)
+    valid_loader = DataLoader(train_data,
+                              batch_size=batch_size,
+                              sampler=valid_sampler)
+    test_loader = DataLoader(test_data,
+                             batch_size=batch_size)
+    
+    return train_loader, valid_loader, test_loader
+
+def FashionMNIST_make_loaders(batch_size):
+    torch.manual_seed(42)
+
+    valid_size = 0.2 #The percentage of training set to use as validation
+    transform = transforms.ToTensor()
+
+    train_data = datasets.FashionMNIST(root='../Data',
+                                train=True, 
+                                download=True, 
+                                transform=transform)
+    test_data = datasets.FashionMNIST(root='../Data', 
+                               train=False, 
+                               download=True, 
+                               transform=transform)
+    #Obtain the indices from the training set that will be used for validation
+    num_train = len(train_data)
+    indices = list(range(num_train))
+    np.random.shuffle(indices)
+    split = int(np.floor(valid_size * num_train))
+    train_idx, valid_idx = indices[split:], indices[:split]
+
+    #Define the samplers to obtaiun the training and validation batches
+    train_sampler = SubsetRandomSampler(train_idx)
+    valid_sampler = SubsetRandomSampler(valid_idx)
+
+
+    train_loader = DataLoader(train_data,
+                              batch_size=batch_size,
+                              sampler=train_sampler)
+    valid_loader = DataLoader(train_data,
+                              batch_size=batch_size,
+                              sampler=valid_sampler)
+    test_loader = DataLoader(test_data,
+                             batch_size=batch_size)
+    
+    return train_loader, valid_loader, test_loader
+
+def STL10_make_loaders(batch_size):
+    torch.manual_seed(42)
+
+    valid_size = 0.2 #The percentage of training set to use as validation
+    transform = transforms.ToTensor()
+
+    train_data = datasets.STL10(root='../Data',
+                                split="train", 
+                                download=True, 
+                                transform=transform)
+    test_data = datasets.STL10(root='../Data', 
+                               split="test", 
                                download=True, 
                                transform=transform)
     #Obtain the indices from the training set that will be used for validation

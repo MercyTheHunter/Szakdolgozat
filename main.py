@@ -2,9 +2,18 @@ import conv_nn as c
 import functions as func
 import os
 
-train_loader, valid_loader, test_loader = func.make_loaders(batch_size=256)
+dataset = "MNIST"
 
-func.example_plot(train_loader=train_loader)
+if dataset == "MNIST":
+    train_loader, valid_loader, test_loader = func.MNIST_make_loaders(batch_size=256)
+    func.example_plot(train_loader=train_loader)
+elif dataset == "FashionMNIST":
+    train_loader, valid_loader, test_loader = func.FashionMNIST_make_loaders(batch_size=256)
+    func.example_plot(train_loader=train_loader)
+elif dataset == "STL-10":
+    train_loader, valid_loader, test_loader = func.STL10_make_loaders(batch_size=256)
+    #NEEDS FIXING
+    func.example_plot(train_loader=train_loader)
 
 if os.path.isfile('./conv_nn.pkl'):
     model = func.load_model('conv_nn.pkl')
