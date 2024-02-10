@@ -22,6 +22,7 @@ class App(customtkinter.CTk):
 
         # set current path for images
         current_path = os.path.dirname(os.path.realpath(__file__))
+        #current_path = os.path.dirname(os.path.abspath(__file__))
 
         # create sidebar frame with widgets
         self.sidebar_frame = customtkinter.CTkFrame(self, width=100, corner_radius=0)
@@ -69,21 +70,27 @@ class App(customtkinter.CTk):
 
         self.tabview_2.tab("MNIST").grid_columnconfigure(0, weight=1)
         self.tabview_2.tab("MNIST").grid_rowconfigure(0, weight=1)
-        self.image_t2_ep = customtkinter.CTkImage(Image.open(current_path + "/MNIST_example_plot.png"), size=(854, 480))
+        self.image_t2_ep = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "MNIST_example_plot.png")), size=(854, 480))
         self.image_t2_ep_label = customtkinter.CTkLabel(self.tabview_2.tab("MNIST"), text ="", image=self.image_t2_ep)
         self.image_t2_ep_label.grid(row=0, column=0)
+        self.textbox = customtkinter.CTkTextbox(self.tabview_2.tab("MNIST"))
+        self.textbox.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
         self.tabview_2.tab("FashionMNIST").grid_columnconfigure(0, weight=1)
         self.tabview_2.tab("FashionMNIST").grid_rowconfigure(0, weight=1)
-        self.image_t2_ep = customtkinter.CTkImage(Image.open(current_path + "/FashionMNIST_example_plot.png"), size=(854, 480))
+        self.image_t2_ep = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "FashionMNIST_example_plot.png")), size=(854, 480))
         self.image_t2_ep_label = customtkinter.CTkLabel(self.tabview_2.tab("FashionMNIST"), text ="", image=self.image_t2_ep)
         self.image_t2_ep_label.grid(row=0, column=0)
+        self.textbox = customtkinter.CTkTextbox(self.tabview_2.tab("FashionMNIST"))
+        self.textbox.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
         self.tabview_2.tab("STL-10").grid_columnconfigure(0, weight=1)
         self.tabview_2.tab("STL-10").grid_rowconfigure(0, weight=1)
-        self.image_t2_ep = customtkinter.CTkImage(Image.open(current_path + "/STL10_example_plot.png"), size=(854, 480))
-        self.image_t2_ep_label = customtkinter.CTkLabel(self.tabview_2.tab("STL10"), text ="", image=self.image_t2_ep)
-        self.image_t2_ep_label.grid(row=0, column=0)
+        #self.image_t2_ep = customtkinter.CTkImage(Image.open(current_path + "/SavedPlots/STL10_example_plot.png"), size=(854, 480))
+        #self.image_t2_ep_label = customtkinter.CTkLabel(self.tabview_2.tab("STL10"), text ="", image=self.image_t2_ep)
+        #self.image_t2_ep_label.grid(row=0, column=0)
+        self.textbox = customtkinter.CTkTextbox(self.tabview_2.tab("STL-10"))
+        self.textbox.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
         self.tab_frame_3 = customtkinter.CTkFrame(self,corner_radius=0)
         self.tab_frame_3.grid_columnconfigure(0, weight=1)
@@ -97,7 +104,7 @@ class App(customtkinter.CTk):
 
         self.tabview_3.tab("Learning Rate").grid_columnconfigure(0, weight=1)
         self.tabview_3.tab("Learning Rate").grid_rowconfigure(0, weight=1)
-        self.image_t3_lr = customtkinter.CTkImage(Image.open(current_path + "/loss_plot.png"), size=(854, 480))
+        self.image_t3_lr = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "MNIST_conv_nn_loss_plot.png")), size=(854, 480))
         self.image_t3_lr_label = customtkinter.CTkLabel(self.tabview_3.tab("Learning Rate"), text ="", image=self.image_t3_lr)
         self.image_t3_lr_label.grid(row=0, column=0)
 
