@@ -45,7 +45,7 @@ class App(customtkinter.CTk):
         self.appearance_mode_optionemenu.grid(row=7, column=0, padx=20, pady=(10, 10))
         self.scaling_label = customtkinter.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
         self.scaling_label.grid(row=8, column=0, padx=20, pady=(20, 0))
-        self.scaling_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["80%", "90%", "100%", "110%", "120%"],
+        self.scaling_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["50%", "60%", "70%", "80%", "90%", "100%", "110%", "120%", "130%", "140%", "150%"],
                                                                command=self.change_scaling_event)
         self.scaling_optionemenu.grid(row=9, column=0, padx=20, pady=(10, 10))
 
