@@ -4,6 +4,7 @@ import os
 
 dataset = "MNIST"
 filename = dataset + "_conv_nn.pkl"
+current_path = os.path.dirname(os.path.realpath(__file__))
 
 if dataset == "MNIST":
     train_loader, valid_loader, test_loader = func.MNIST_make_loaders(batch_size=256)
@@ -16,7 +17,7 @@ elif dataset == "STL10":
     #NEEDS FIXING
     func.example_plot(train_loader=train_loader)
 
-if os.path.isfile('./' + filename):
+if os.path.isfile(os.path.join(current_path, "SavedModels/", filename)):
     model = func.load_model(filename)
 else:
     model = c.Conv_NN()

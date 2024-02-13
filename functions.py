@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import multilabel_confusion_matrix as mcm
 from sklearn.metrics import classification_report
 from sklearn.model_selection import cross_val_score
-from yellowbrick.classifier import ConfusionMatrix
-from yellowbrick.classifier import ClassPredictionError
-from yellowbrick.classifier import ROCAUC
+#from yellowbrick.classifier import ConfusionMatrix
+#from yellowbrick.classifier import ClassPredictionError
+#from yellowbrick.classifier import ROCAUC
 
 def MNIST_make_loaders(batch_size):
     torch.manual_seed(42)

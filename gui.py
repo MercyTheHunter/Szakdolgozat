@@ -7,8 +7,8 @@ customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
 class App(customtkinter.CTk):
-    width = 1280
-    height = 720
+    width = 1920
+    height = 1080
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -64,29 +64,29 @@ class App(customtkinter.CTk):
         self.tab_frame_2.grid_rowconfigure(0, weight=1)
         self.tabview_2 = customtkinter.CTkTabview(self.tab_frame_2)
         self.tabview_2.grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky="nsew")
+        
         self.tabview_2.add("MNIST")
-        self.tabview_2.add("FashionMNIST")
-        self.tabview_2.add("STL-10")
-
         self.tabview_2.tab("MNIST").grid_columnconfigure(0, weight=1)
         self.tabview_2.tab("MNIST").grid_rowconfigure(0, weight=1)
-        self.image_t2_ep = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "MNIST_example_plot.png")), size=(854, 480))
+        self.image_t2_ep = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "MNIST_example_plot.png")), size=(1280, 150))
         self.image_t2_ep_label = customtkinter.CTkLabel(self.tabview_2.tab("MNIST"), text ="", image=self.image_t2_ep)
         self.image_t2_ep_label.grid(row=0, column=0)
         self.textbox = customtkinter.CTkTextbox(self.tabview_2.tab("MNIST"))
         self.textbox.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
-
+        
+        self.tabview_2.add("FashionMNIST")
         self.tabview_2.tab("FashionMNIST").grid_columnconfigure(0, weight=1)
         self.tabview_2.tab("FashionMNIST").grid_rowconfigure(0, weight=1)
-        self.image_t2_ep = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "FashionMNIST_example_plot.png")), size=(854, 480))
+        self.image_t2_ep = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "FashionMNIST_example_plot.png")), size=(1280, 150))
         self.image_t2_ep_label = customtkinter.CTkLabel(self.tabview_2.tab("FashionMNIST"), text ="", image=self.image_t2_ep)
         self.image_t2_ep_label.grid(row=0, column=0)
         self.textbox = customtkinter.CTkTextbox(self.tabview_2.tab("FashionMNIST"))
         self.textbox.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
-
+        
+        self.tabview_2.add("STL-10")
         self.tabview_2.tab("STL-10").grid_columnconfigure(0, weight=1)
         self.tabview_2.tab("STL-10").grid_rowconfigure(0, weight=1)
-        #self.image_t2_ep = customtkinter.CTkImage(Image.open(current_path + "/SavedPlots/STL10_example_plot.png"), size=(854, 480))
+        #self.image_t2_ep = customtkinter.CTkImage(Image.open(current_path + "/SavedPlots/STL10_example_plot.png"), size=(1280, 720))
         #self.image_t2_ep_label = customtkinter.CTkLabel(self.tabview_2.tab("STL10"), text ="", image=self.image_t2_ep)
         #self.image_t2_ep_label.grid(row=0, column=0)
         self.textbox = customtkinter.CTkTextbox(self.tabview_2.tab("STL-10"))
@@ -97,16 +97,44 @@ class App(customtkinter.CTk):
         self.tab_frame_3.grid_rowconfigure(0, weight=1)
         self.tabview_3 = customtkinter.CTkTabview(self.tab_frame_3)
         self.tabview_3.grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky="nsew")
-        self.tabview_3.add("A Regular Neural Network")
-        self.tabview_3.add("A Neural Network With The FNO")
-        self.tabview_3.add("Learning Rate")
-        self.tabview_3.add("Accuracy")
-
-        self.tabview_3.tab("Learning Rate").grid_columnconfigure(0, weight=1)
-        self.tabview_3.tab("Learning Rate").grid_rowconfigure(0, weight=1)
-        self.image_t3_lr = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "MNIST_conv_nn_loss_plot.png")), size=(854, 480))
-        self.image_t3_lr_label = customtkinter.CTkLabel(self.tabview_3.tab("Learning Rate"), text ="", image=self.image_t3_lr)
-        self.image_t3_lr_label.grid(row=0, column=0)
+        self.tabview_3.add("Comparison")
+        self.tabview_3.add("MNIST")
+        #Convolutional Neural Network
+        self.tabview_3.tab("MNIST").grid_columnconfigure(0, weight=1)
+        self.tabview_3.tab("MNIST").grid_rowconfigure(0, weight=1)
+        self.image_t3_cnn_lp_MNIST = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "MNIST_conv_nn_loss_plot.png")), size=(850, 700))
+        self.image_t3_cnn_lp_MNIST_label = customtkinter.CTkLabel(self.tabview_3.tab("MNIST"), text ="", image=self.image_t3_cnn_lp_MNIST)
+        self.image_t3_cnn_lp_MNIST_label.grid(row=0, column=0, padx=(20, 0), pady=(20, 0))
+        self.textbox = customtkinter.CTkTextbox(self.tabview_3.tab("MNIST"))
+        self.textbox.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.textbox.insert("0.0","The validation loss during training on the MNIST dataset")
+        #Fourier Neural Operator
+        self.image_t3_fno_lp_MNIST = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "MNIST_conv_nn_loss_plot.png")), size=(850, 700))
+        self.image_t3_fno_lp_MNIST_label = customtkinter.CTkLabel(self.tabview_3.tab("MNIST"), text ="", image=self.image_t3_fno_lp_MNIST)
+        self.image_t3_fno_lp_MNIST_label.grid(row=0, column=1, padx=(20, 0), pady=(20, 0))
+        self.textbox = customtkinter.CTkTextbox(self.tabview_3.tab("MNIST"))
+        self.textbox.grid(row=1, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.textbox.insert("0.0","The validation loss during training on the MNIST dataset")
+        
+        self.tabview_3.add("FashionMNIST")
+        #Convolutional Neural Network
+        self.tabview_3.tab("FashionMNIST").grid_columnconfigure(0, weight=1)
+        self.tabview_3.tab("FashionMNIST").grid_rowconfigure(0, weight=1)
+        self.image_t3_cnn_lp_FashionMNIST = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "FashionMNIST_conv_nn_loss_plot.png")), size=(850, 700))
+        self.image_t3_cnn_lp_FashionMNIST_label = customtkinter.CTkLabel(self.tabview_3.tab("FashionMNIST"), text ="", image=self.image_t3_cnn_lp_FashionMNIST)
+        self.image_t3_cnn_lp_FashionMNIST_label.grid(row=0, column=0, padx=(20, 0), pady=(20, 0))
+        self.textbox = customtkinter.CTkTextbox(self.tabview_3.tab("FashionMNIST"))
+        self.textbox.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.textbox.insert("0.0","The validation loss during training on the FashionMNIST dataset")
+        #Fourier Neural Operator
+        self.image_t3_fno_lp_FashionMNIST = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "FashionMNIST_conv_nn_loss_plot.png")), size=(850, 700))
+        self.image_t3_fno_lp_FashionMNIST_label = customtkinter.CTkLabel(self.tabview_3.tab("FashionMNIST"), text ="", image=self.image_t3_fno_lp_FashionMNIST)
+        self.image_t3_fno_lp_FashionMNIST_label.grid(row=0, column=1, padx=(20, 0), pady=(20, 0))
+        self.textbox = customtkinter.CTkTextbox(self.tabview_3.tab("FashionMNIST"))
+        self.textbox.grid(row=1, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.textbox.insert("0.0","The validation loss during training on the FashionMNIST dataset")
+        
+        self.tabview_3.add("STL-10")
 
         self.tab_frame_4 = customtkinter.CTkFrame(self,corner_radius=0)
         self.tab_frame_4.grid_columnconfigure(0, weight=1)
