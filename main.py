@@ -1,4 +1,4 @@
-import conv_nn as c
+import models as m
 import functions as func
 import os
 
@@ -20,7 +20,7 @@ elif dataset == "STL10":
 if os.path.isfile(os.path.join(current_path, "SavedModels/", filename)):
     model = func.load_model(filename)
 else:
-    model = c.Conv_NN()
+    model = m.Conv_NN()
     model, train_losses, valid_losses = func.train_model(model=model,
                                                      train_loader=train_loader,
                                                      valid_loader=valid_loader,
