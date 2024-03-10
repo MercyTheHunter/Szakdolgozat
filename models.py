@@ -98,6 +98,36 @@ class FourierLayer(nn.Module):
 #   Neural Network Using the 2D Fourier Layer - Fourier Neural Operator
 ###########################################################################
 class FNO_NN(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, padding, stride, modes):
+    def __init__(self, in_channels, out_channels, kernel_size, padding, stride, modes1, modes2):
         super(FNO_NN, self).__init__()
+        self.fno1 = nn.Conv2d(in_channels=1, out_channels=6, kernel_size=5, padding=2, stride=1, modes1=1, modes2=1) #32 x 32 x 1 -> ? x ? x 6 -> ?/2 x ?/2 x 6
+        self.fno2 = nn.Conv2d(in_channels=6, out_channels=12, kernel_size=5, padding=2, stride=1, modes1=1, modes2=1) #?/2 x ?/2 x 6 -> ?? x ?? x 12 -> ??/2 x ??/2 x 12
+        self.fc1 = nn.Linear(4*4*12,128) #??/2 x ??/2 x 12
+        self.fc2 = nn.Linear(128,64)
+        self.fc3 = nn.Linear(64,10)
+        self.dropout = nn.Dropout(0.5)
 
+    def forward(self, x):
+        batch_size = x.shape[0]
+
+        x = self.fno1(x)
+        x = F.gelu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = self.fno2(x)
+        x = F.gelu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = x.view(batch_size, -1)
+
+        x = self.fc1(x)
+        x = F.gelu(x)
+        x = self.dropout(x)
+
+        x = self.fc2(x)
+        x = F.gelu(x)
+        x = self.dropout(x)
+
+        x = self.fc3(x)
+
+        return x
