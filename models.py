@@ -71,7 +71,7 @@ class SpectralConv2d(nn.Module):
         out_ft = torch.zeros(batchsize, self.out_channels, x.size(-2), x.size(-1)//2 + 1, device = x.device, dtype = torch.cfloat)
         out_ft[:, :, :self.modes1, :self.modes2] = self.compl_mul2d(x_ft[:, :, :self.modes1, :self.modes2], torch.view_as_complex(self.weights1))
         out_ft[:, :, :self.modes1, :self.modes2] = self.compl_mul2d(x_ft[:, :, :self.modes1, :self.modes2], torch.view_as_complex(self.weights2))
-
+        
         #Return to pysical space
         x = torch.fft.irfft2(out_ft, s =(x.size(-2), x.size(-1)))
 
@@ -100,10 +100,9 @@ class FourierLayer(nn.Module):
 class FNO_NN(nn.Module):
     def __init__(self):
         super(FNO_NN, self).__init__()
-        self.fno1 = FourierLayer(in_channels=1, out_channels=32, kernel_size=5, padding=5//2, stride=1, modes1=1, modes2=1) 
-        self.fno2 = FourierLayer(in_channels=32, out_channels=64, kernel_size=5, padding=5//2, stride=1, modes1=1, modes2=1)
-        self.fno3 = FourierLayer(in_channels=64, out_channels=128, kernel_size=5, padding=5//2, stride=1, modes1=1, modes2=1)
-        self.fc1 = nn.Linear(1152,256)
+        self.fno1 = FourierLayer(in_channels=1, out_channels=32, kernel_size=5, padding=5//2, stride=1, modes1=4, modes2=4) 
+        #If more than 1 Fourier Layer then the model will guess everything as 1
+        self.fc1 = nn.Linear(6272,256) 
         self.fc2 = nn.Linear(256,128)
         self.fc3 = nn.Linear(128,64)
         self.fc4 = nn.Linear(64,32)
@@ -117,13 +116,13 @@ class FNO_NN(nn.Module):
         x = F.gelu(x)
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
-        x = self.fno2(x)
-        x = F.gelu(x)
-        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+        #x = self.fno2(x)
+        #x = F.gelu(x)
+        #x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
-        x = self.fno3(x)
-        x = F.gelu(x)
-        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+        #x = self.fno3(x)
+        #x = F.gelu(x)
+        #x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = x.view(batch_size, -1)
 
