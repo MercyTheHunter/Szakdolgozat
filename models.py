@@ -100,9 +100,9 @@ class FourierLayer(nn.Module):
 class FNO_NN(nn.Module):
     def __init__(self):
         super(FNO_NN, self).__init__()
-        self.fno1 = FourierLayer(in_channels=1, out_channels=32, kernel_size=5, padding=5//2, stride=1, modes1=4, modes2=4) 
+        self.fno1 = FourierLayer(in_channels=1, out_channels=32, kernel_size=7, padding=7//2, stride=1, modes1=4, modes2=4) 
         #If more than 1 Fourier Layer then the model will guess everything as 1
-        self.fc1 = nn.Linear(6272,256) 
+        self.fc1 = nn.Linear(14*14*32,256) 
         self.fc2 = nn.Linear(256,128)
         self.fc3 = nn.Linear(128,64)
         self.fc4 = nn.Linear(64,32)
@@ -115,14 +115,6 @@ class FNO_NN(nn.Module):
         x = self.fno1(x)
         x = F.gelu(x)
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
-
-        #x = self.fno2(x)
-        #x = F.gelu(x)
-        #x = F.avg_pool2d(x, kernel_size=2, stride=2)
-
-        #x = self.fno3(x)
-        #x = F.gelu(x)
-        #x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = x.view(batch_size, -1)
 
