@@ -54,8 +54,8 @@ class SpectralConv2d(nn.Module):
         self.modes2 = modes2
 
         self.scale = (1 / in_channels * out_channels)
-        self.weights1 = nn.Parameter(self.scale * torch.rand(in_channels, out_channels, self.modes1, self.modes2, dtype=torch.float))
-        self.weights2 = nn.Parameter(self.scale * torch.rand(in_channels, out_channels, self.modes1, self.modes2, dtype=torch.float))
+        self.weights1 = nn.Parameter(self.scale * torch.rand(in_channels, out_channels, self.modes1, self.modes2, 2, dtype=torch.float))
+        self.weights2 = nn.Parameter(self.scale * torch.rand(in_channels, out_channels, self.modes1, self.modes2, 2, dtype=torch.float))
     
     def compl_mul2d(self, input, weigths):
         # (batch, in_channel, x, y) -> bixy, (in_channel, out_channel, x, y) -> ioxy, (batch, out_channel, x, y) -> boxy
@@ -98,13 +98,16 @@ class FourierLayer(nn.Module):
 #   Neural Network Using the 2D Fourier Layer - Fourier Neural Operator
 ###########################################################################
 class FNO_NN(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, padding, stride, modes1, modes2):
+    def __init__(self):
         super(FNO_NN, self).__init__()
-        self.fno1 = nn.Conv2d(in_channels=1, out_channels=6, kernel_size=5, padding=2, stride=1, modes1=1, modes2=1) #32 x 32 x 1 -> ? x ? x 6 -> ?/2 x ?/2 x 6
-        self.fno2 = nn.Conv2d(in_channels=6, out_channels=12, kernel_size=5, padding=2, stride=1, modes1=1, modes2=1) #?/2 x ?/2 x 6 -> ?? x ?? x 12 -> ??/2 x ??/2 x 12
-        self.fc1 = nn.Linear(4*4*12,128) #??/2 x ??/2 x 12
-        self.fc2 = nn.Linear(128,64)
-        self.fc3 = nn.Linear(64,10)
+        self.fno1 = FourierLayer(in_channels=1, out_channels=32, kernel_size=5, padding=5//2, stride=1, modes1=1, modes2=1) 
+        self.fno2 = FourierLayer(in_channels=32, out_channels=64, kernel_size=5, padding=5//2, stride=1, modes1=1, modes2=1)
+        self.fno3 = FourierLayer(in_channels=64, out_channels=128, kernel_size=5, padding=5//2, stride=1, modes1=1, modes2=1)
+        self.fc1 = nn.Linear(1152,256)
+        self.fc2 = nn.Linear(256,128)
+        self.fc3 = nn.Linear(128,64)
+        self.fc4 = nn.Linear(64,32)
+        self.fc5 = nn.Linear(32,10)
         self.dropout = nn.Dropout(0.5)
 
     def forward(self, x):
@@ -115,6 +118,10 @@ class FNO_NN(nn.Module):
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.fno2(x)
+        x = F.gelu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = self.fno3(x)
         x = F.gelu(x)
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
@@ -129,5 +136,13 @@ class FNO_NN(nn.Module):
         x = self.dropout(x)
 
         x = self.fc3(x)
+        x = F.gelu(x)
+        x = self.dropout(x)
+
+        x = self.fc4(x)
+        x = F.gelu(x)
+        x = self.dropout(x)
+
+        x = self.fc5(x)
 
         return x

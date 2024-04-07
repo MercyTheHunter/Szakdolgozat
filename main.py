@@ -3,12 +3,12 @@ import functions as func
 import os
 
 dataset = "MNIST"
-filename = dataset + "_conv_nn.pkl"
+filename = dataset + "_FNN.pkl"
 current_path = os.path.dirname(os.path.realpath(__file__))
 
 if dataset == "MNIST":
     train_loader, valid_loader, test_loader = func.MNIST_make_loaders(batch_size=256)
-    func.example_plot(train_loader=train_loader)
+    #func.example_plot(train_loader=train_loader)
 elif dataset == "FashionMNIST":
     train_loader, valid_loader, test_loader = func.FashionMNIST_make_loaders(batch_size=256)
     func.example_plot(train_loader=train_loader)
@@ -20,12 +20,12 @@ elif dataset == "STL10":
 if os.path.isfile(os.path.join(current_path, "SavedModels/", filename)):
     model = func.load_model(filename)
 else:
-    model = m.Conv_NN()
+    model = m.FNO_NN()
     model, train_losses, valid_losses = func.train_model(model=model,
                                                      train_loader=train_loader,
                                                      valid_loader=valid_loader,
                                                      patience=5,
-                                                     n_epochs=100)
+                                                     n_epochs=50)
     func.save_model(model, filename)
     func.loss_plot(train_loss=train_losses, valid_loss=valid_losses)
 

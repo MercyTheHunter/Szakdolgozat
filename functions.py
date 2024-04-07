@@ -281,7 +281,7 @@ def loss_plot(train_loss, valid_loss):
 
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
-    plt.ylim(0, 0.5)
+    plt.ylim(0, 3)
     plt.xlim(0, len(train_loss)+1)
     plt.grid(True)
     plt.legend()
