@@ -257,7 +257,7 @@ def load_model(model_name):
     print(f"{model_name} has been loaded!\n")
     return model
     
-def example_plot(train_loader):
+def example_plot(train_loader, dataset):
     np.set_printoptions(formatter=dict(int=lambda x: f"{x:4}"))
 
     for images, labels in train_loader:
@@ -270,7 +270,8 @@ def example_plot(train_loader):
         ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
         ax.imshow(np.squeeze(images[idx]), cmap="gray")
     plt.show()
-    fig.savefig("example_plot.png", bbox_inches="tight")
+    figname = dataset + "_example_plot.png"
+    fig.savefig(figname, bbox_inches="tight")
 
 def loss_plot(train_loss, valid_loss, filename):
     #Loss during the training process

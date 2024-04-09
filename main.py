@@ -2,8 +2,8 @@ import models as m
 import functions as func
 import os
 
-#dataset = "MNIST"
-dataset = "FashionMNIST"
+dataset = "MNIST"
+#dataset = "FashionMNIST"
 #dataset = "STL10"
 
 filename = dataset + "_CNN"
@@ -16,14 +16,17 @@ current_path = os.path.dirname(os.path.realpath(__file__))
 
 if dataset == "MNIST":
     train_loader, valid_loader, test_loader = func.MNIST_make_loaders(batch_size=256)
-    #func.example_plot(train_loader=train_loader)
+    func.example_plot(train_loader=train_loader,
+                      dataset=dataset)
 elif dataset == "FashionMNIST":
     train_loader, valid_loader, test_loader = func.FashionMNIST_make_loaders(batch_size=256)
-    #func.example_plot(train_loader=train_loader)
+    func.example_plot(train_loader=train_loader,
+                      dataset=dataset)
 elif dataset == "STL10":
     train_loader, valid_loader, test_loader = func.STL10_make_loaders(batch_size=256)
     #NEEDS FIXING
-    func.example_plot(train_loader=train_loader)
+    func.example_plot(train_loader=train_loader,
+                      dataset=dataset)
 
 if os.path.isfile(os.path.join(current_path, "SavedModels/", savedmodelname)):
     print("There is a saved model.")

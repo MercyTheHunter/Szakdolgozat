@@ -102,14 +102,14 @@ class App(customtkinter.CTk):
         #Convolutional Neural Network
         self.tabview_3.tab("MNIST").grid_columnconfigure(0, weight=1)
         self.tabview_3.tab("MNIST").grid_rowconfigure(0, weight=1)
-        self.image_t3_cnn_lp_MNIST = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "MNIST_conv_nn_loss_plot.png")), size=(850, 700))
+        self.image_t3_cnn_lp_MNIST = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "MNIST_CNN_loss_plot.png")), size=(850, 700))
         self.image_t3_cnn_lp_MNIST_label = customtkinter.CTkLabel(self.tabview_3.tab("MNIST"), text ="", image=self.image_t3_cnn_lp_MNIST)
         self.image_t3_cnn_lp_MNIST_label.grid(row=0, column=0, padx=(20, 0), pady=(20, 0))
         self.textbox = customtkinter.CTkTextbox(self.tabview_3.tab("MNIST"))
         self.textbox.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
         self.textbox.insert("0.0","The validation loss during training on the MNIST dataset")
         #Fourier Neural Operator
-        self.image_t3_fno_lp_MNIST = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "MNIST_conv_nn_loss_plot.png")), size=(850, 700))
+        self.image_t3_fno_lp_MNIST = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "MNIST_FNN_loss_plot.png")), size=(850, 700))
         self.image_t3_fno_lp_MNIST_label = customtkinter.CTkLabel(self.tabview_3.tab("MNIST"), text ="", image=self.image_t3_fno_lp_MNIST)
         self.image_t3_fno_lp_MNIST_label.grid(row=0, column=1, padx=(20, 0), pady=(20, 0))
         self.textbox = customtkinter.CTkTextbox(self.tabview_3.tab("MNIST"))
@@ -120,14 +120,14 @@ class App(customtkinter.CTk):
         #Convolutional Neural Network
         self.tabview_3.tab("FashionMNIST").grid_columnconfigure(0, weight=1)
         self.tabview_3.tab("FashionMNIST").grid_rowconfigure(0, weight=1)
-        self.image_t3_cnn_lp_FashionMNIST = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "FashionMNIST_conv_nn_loss_plot.png")), size=(850, 700))
+        self.image_t3_cnn_lp_FashionMNIST = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "FashionMNIST_CNN_loss_plot.png")), size=(850, 700))
         self.image_t3_cnn_lp_FashionMNIST_label = customtkinter.CTkLabel(self.tabview_3.tab("FashionMNIST"), text ="", image=self.image_t3_cnn_lp_FashionMNIST)
         self.image_t3_cnn_lp_FashionMNIST_label.grid(row=0, column=0, padx=(20, 0), pady=(20, 0))
         self.textbox = customtkinter.CTkTextbox(self.tabview_3.tab("FashionMNIST"))
         self.textbox.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
         self.textbox.insert("0.0","The validation loss during training on the FashionMNIST dataset")
         #Fourier Neural Operator
-        self.image_t3_fno_lp_FashionMNIST = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "FashionMNIST_conv_nn_loss_plot.png")), size=(850, 700))
+        self.image_t3_fno_lp_FashionMNIST = customtkinter.CTkImage(Image.open(os.path.join(current_path, "SavedPlots/", "FashionMNIST_FNN_loss_plot.png")), size=(850, 700))
         self.image_t3_fno_lp_FashionMNIST_label = customtkinter.CTkLabel(self.tabview_3.tab("FashionMNIST"), text ="", image=self.image_t3_fno_lp_FashionMNIST)
         self.image_t3_fno_lp_FashionMNIST_label.grid(row=0, column=1, padx=(20, 0), pady=(20, 0))
         self.textbox = customtkinter.CTkTextbox(self.tabview_3.tab("FashionMNIST"))
