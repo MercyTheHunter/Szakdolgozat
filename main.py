@@ -6,36 +6,48 @@ import os
 dataset = "FashionMNIST"
 #dataset = "STL10"
 
-#filename = dataset + "_conv_nn.pkl"
-filename = dataset + "_FNN.pkl"
+filename = dataset + "_CNN"
+#filename = dataset + "_FNN"
+
+savedmodelname = dataset + "_CNN.pkl"
+#savedmodelname = dataset + "_FNN.pkl"
 
 current_path = os.path.dirname(os.path.realpath(__file__))
 
 if dataset == "MNIST":
     train_loader, valid_loader, test_loader = func.MNIST_make_loaders(batch_size=256)
-    func.example_plot(train_loader=train_loader)
+    #func.example_plot(train_loader=train_loader)
 elif dataset == "FashionMNIST":
     train_loader, valid_loader, test_loader = func.FashionMNIST_make_loaders(batch_size=256)
-    func.example_plot(train_loader=train_loader)
+    #func.example_plot(train_loader=train_loader)
 elif dataset == "STL10":
     train_loader, valid_loader, test_loader = func.STL10_make_loaders(batch_size=256)
     #NEEDS FIXING
     func.example_plot(train_loader=train_loader)
 
-if os.path.isfile(os.path.join(current_path, "SavedModels/", filename)):
-    model = func.load_model(filename)
+if os.path.isfile(os.path.join(current_path, "SavedModels/", savedmodelname)):
+    print("There is a saved model.")
+    print("Loading the saved model...")
+    model = func.load_model(savedmodelname)
 else:
-    model = m.FNO_NN()
+    model = m.Conv_NN()
+    #model = m.FNO_NN()
     model, train_losses, valid_losses = func.train_model(model=model,
-                                                     train_loader=train_loader,
-                                                     valid_loader=valid_loader,
-                                                     patience=5,
-                                                     n_epochs=100)
-    func.save_model(model, filename)
-    func.loss_plot(train_loss=train_losses, valid_loss=valid_losses)
+                                                         train_loader=train_loader,
+                                                         valid_loader=valid_loader,
+                                                         patience=5,
+                                                         n_epochs=100)
+    func.save_model(model, savedmodelname)
+    func.loss_plot(train_loss=train_losses, 
+                   valid_loss=valid_losses, 
+                   filename=filename)
 
 func.count_parameters(model)
 
-func.evaluate_model(model=model, test_loader=test_loader, batch_size=256)
+func.evaluate_model(model=model, 
+                    test_loader=test_loader, 
+                    batch_size=256)
 
-func.sample_test(model=model, test_loader=test_loader)
+func.sample_test(model=model, 
+                 test_loader=test_loader,
+                 filename=filename)

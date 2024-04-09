@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import os
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
@@ -250,7 +251,9 @@ def save_model(model, model_name):
     print(f"Model saved as: {model_name}\n")
 
 def load_model(model_name):
-    model = joblib.load(model_name)
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    saved_model_name = os.path.join(current_path, "SavedModels/", model_name)
+    model = joblib.load(saved_model_name)
     print(f"{model_name} has been loaded!\n")
     return model
     
@@ -269,7 +272,7 @@ def example_plot(train_loader):
     plt.show()
     fig.savefig("example_plot.png", bbox_inches="tight")
 
-def loss_plot(train_loss, valid_loss):
+def loss_plot(train_loss, valid_loss, filename):
     #Loss during the training process
     fig = plt.figure(figsize=(10,8))
     plt.plot(range(1, len(train_loss)+1), train_loss, label="Training Loss")
@@ -287,9 +290,10 @@ def loss_plot(train_loss, valid_loss):
     plt.legend()
     plt.tight_layout()
     plt.show()
-    fig.savefig("loss_plot.png", bbox_inches="tight")
+    figname = filename + "_loss_plot.png" 
+    fig.savefig(figname, bbox_inches="tight")
 
-def sample_test(model, test_loader):
+def sample_test(model, test_loader, filename):
     for images, labels in test_loader:
         break
 
@@ -305,6 +309,7 @@ def sample_test(model, test_loader):
                                       str(labels[idx].item())),
                                       color=("g" if preds[idx]==labels[idx] else "r"))
     plt.show()
-    fig.savefig("sample_test_plot.png", bbox_inches="tight")
+    figname = filename + "_sample_test_plot.png" 
+    fig.savefig(figname, bbox_inches="tight")
 
     
