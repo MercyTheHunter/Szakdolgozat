@@ -2,8 +2,8 @@ import models as m
 import functions as func
 import os
 
-dataset = "MNIST"
-#dataset = "FashionMNIST"
+#dataset = "MNIST"
+dataset = "FashionMNIST"
 #dataset = "STL10"
 
 #filename = dataset + "_conv_nn.pkl"
