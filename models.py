@@ -3,16 +3,47 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 ##############################################################
-#   2D Convolutional Neural Network
+#   2D Convolutional Neural Networks
 ##############################################################
-class Conv_NN(nn.Module):
+class Conv_NN_small(nn.Module):
     def __init__(self):
-        super(Conv_NN, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=1, out_channels=6, kernel_size=5, stride=1) #28 x 28 x 1 -> 24 x 24 x 6 -> 12 x 12 x 6
-        self.conv2 = nn.Conv2d(in_channels=6, out_channels=12, kernel_size=5, stride=1) #12 x 12 x 6 -> 8 x 8 x 12 -> 4 x 4 x 12
-        self.fc1 = nn.Linear(4*4*12,128)
-        self.fc2 = nn.Linear(128,64)
-        self.fc3 = nn.Linear(64,10)
+        super(Conv_NN_small, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=7, stride=1)
+        self.fc1 = nn.Linear(11*11*32,256)  #kernel:3 -> 13*13*32; kernel:5 -> 12*12*32; kernel:7 -> 11*11*32
+        self.fc2 = nn.Linear(256,32)
+        self.fc3 = nn.Linear(32,10)
+        self.dropout = nn.Dropout(0.5)
+
+    def forward(self, x):
+        batch_size = x.shape[0]
+
+        x = self.conv1(x)
+        x = F.relu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = x.view(batch_size, -1)
+
+        x = self.fc1(x)
+        x = F.relu(x)
+        x = self.dropout(x)
+
+        x = self.fc2(x)
+        x = F.relu(x)
+        x = self.dropout(x)
+
+        x = self.fc3(x)
+
+        return x
+class Conv_NN_medium(nn.Module):
+    def __init__(self):
+        super(Conv_NN_medium, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=16, kernel_size=7, stride=1) #28 x 28 x 1 -> 26 x 26 x 16 -> 13 x 13 x 16
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=7, stride=1) #13 x 13 x 16 -> 11 x 11 x 32 -> 5 x 5 x 32
+        self.fc1 = nn.Linear(2*2*32,256)    #kernel:3 -> 5*5*32; kernel:5 -> 4*4*32; kernel:7 -> 2*2*32
+        self.fc2 = nn.Linear(256,128)
+        self.fc3 = nn.Linear(128,64)
+        self.fc4 = nn.Linear(64,32)
+        self.fc5 = nn.Linear(32,10)
         self.dropout = nn.Dropout(0.5)
 
     def forward(self, x):
@@ -37,6 +68,14 @@ class Conv_NN(nn.Module):
         x = self.dropout(x)
 
         x = self.fc3(x)
+        x = F.gelu(x)
+        x = self.dropout(x)
+
+        x = self.fc4(x)
+        x = F.gelu(x)
+        x = self.dropout(x)
+
+        x = self.fc5(x)
 
         return x
     
@@ -95,14 +134,43 @@ class FourierLayer(nn.Module):
         return out
     
 ###########################################################################
-#   Neural Network Using the 2D Fourier Layer - Fourier Neural Operator
+#   Neural Networks Using the 2D Fourier Layer - Fourier Neural Operator
 ###########################################################################
-class FNO_NN(nn.Module):
+class FNO_NN_small(nn.Module):
     def __init__(self):
-        super(FNO_NN, self).__init__()
+        super(FNO_NN_small, self).__init__()
         self.fno1 = FourierLayer(in_channels=1, out_channels=32, kernel_size=7, padding=7//2, stride=1, modes1=4, modes2=4) 
-        #If more than 1 Fourier Layer then the model will guess everything as 1
-        self.fc1 = nn.Linear(14*14*32,256) 
+        self.fc1 = nn.Linear(14*14*32,256) #kernel:3 -> 14*14*32; kernel:5 -> 14*14*32; kernel:7 -> 14*14*32
+        self.fc2 = nn.Linear(256,32)
+        self.fc3 = nn.Linear(32,10)
+        self.dropout = nn.Dropout(0.5)
+
+    def forward(self, x):
+        batch_size = x.shape[0]
+
+        x = self.fno1(x)
+        x = F.gelu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = x.view(batch_size, -1)
+
+        x = self.fc1(x)
+        x = F.gelu(x)
+        x = self.dropout(x)
+
+        x = self.fc2(x)
+        x = F.gelu(x)
+        x = self.dropout(x)
+
+        x = self.fc3(x)
+
+        return x
+class FNO_NN_medium(nn.Module):
+    def __init__(self):
+        super(FNO_NN_medium, self).__init__()
+        self.fno1 = FourierLayer(in_channels=1, out_channels=16, kernel_size=7, padding=7//2, stride=1, modes1=4, modes2=4) 
+        self.fno2 = FourierLayer(in_channels=16, out_channels=32, kernel_size=7, padding=7//2, stride=1, modes1=4, modes2=4) 
+        self.fc1 = nn.Linear(7*7*32,256)    #kernel:3 -> 7*7*32; kernel:5 -> 7*7*32; kernel:7 -> 7*7*32
         self.fc2 = nn.Linear(256,128)
         self.fc3 = nn.Linear(128,64)
         self.fc4 = nn.Linear(64,32)
@@ -113,6 +181,10 @@ class FNO_NN(nn.Module):
         batch_size = x.shape[0]
 
         x = self.fno1(x)
+        x = F.gelu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = self.fno2(x)
         x = F.gelu(x)
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
