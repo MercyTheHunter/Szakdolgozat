@@ -23,14 +23,16 @@ from sklearn.model_selection import cross_val_score
 def MNIST_make_loaders(batch_size):
     torch.manual_seed(42)
 
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    data = os.path.join(current_path, "Data/")
     valid_size = 0.2 #The percentage of training set to use as validation
     transform = transforms.ToTensor()
 
-    train_data = datasets.MNIST(root='../Data',
+    train_data = datasets.MNIST(root=data,
                                 train=True, 
                                 download=True, 
                                 transform=transform)
-    test_data = datasets.MNIST(root='../Data', 
+    test_data = datasets.MNIST(root=data, 
                                train=False, 
                                download=True, 
                                transform=transform)
