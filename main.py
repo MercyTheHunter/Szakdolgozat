@@ -2,8 +2,8 @@ import models as m
 import functions as func
 import os
 
-dataset = "MNIST"
-#dataset = "FashionMNIST"
+#dataset = "MNIST"
+dataset = "FashionMNIST"
 #dataset = "STL10"
 
 filename = dataset + "_CNN_small"
@@ -17,8 +17,8 @@ savedmodelname = dataset + "_CNN_small.pkl"
 #savedmodelname = dataset + "_FNN_medium.pkl"
 
 current_path = os.path.dirname(os.path.realpath(__file__))
-patience = 3 #3 or 5 or 7
-kernel = 3 #3 or 5 or 7
+patience = 3 #3 or 5 or 7 (for save location)
+kernel = 3 #3 or 5 or 7 (for save location)
 
 if dataset == "MNIST":
     train_loader, valid_loader, test_loader = func.MNIST_make_loaders(batch_size=256)
