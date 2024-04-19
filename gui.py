@@ -28,7 +28,7 @@ class App(customtkinter.CTk):
         self.sidebar_frame = customtkinter.CTkFrame(self, width=100, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(5, weight=1)
-        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="CustomTkinter", font=customtkinter.CTkFont(size=20, weight="bold"))
+        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="FNO - Image Classification", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
         self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame, text="Neural Operators", command=self.tab_event_1)
         self.sidebar_button_1.grid(row=1, column=0, padx=20, pady=10)
@@ -97,7 +97,6 @@ class App(customtkinter.CTk):
         self.tab_frame_3.grid_rowconfigure(0, weight=1)
         self.tabview_3 = customtkinter.CTkTabview(self.tab_frame_3)
         self.tabview_3.grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky="nsew")
-        self.tabview_3.add("Comparison")
         self.tabview_3.add("MNIST")
         #Convolutional Neural Network
         self.tabview_3.tab("MNIST").grid_columnconfigure(0, weight=1)
