@@ -246,8 +246,15 @@ def evaluate_model(model, test_loader, batch_size):
         100. * np.sum(class_correct) / np.sum(class_total),
         np.sum(class_correct), np.sum(class_total)))
 
-def save_model(model, model_name):
-    joblib.dump(model, model_name)
+def save_model(model, model_name, patience, kernel):
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    current_path = os.path.join(current_path, "TestModels/")
+    patience = "Patience" + str(patience) +"/"
+    patience_folder = os.path.join(current_path, patience)
+    kernel = "Kernel" + str(kernel) + "/"
+    kernel_folder = os.path.join(patience_folder, kernel)
+    save_model = os.path.join(kernel_folder, model_name)
+    joblib.dump(model, save_model)
     print(f"Model saved as: {model_name}\n")
 
 def load_model(model_name):
@@ -273,7 +280,7 @@ def example_plot(train_loader, dataset):
     figname = dataset + "_example_plot.png"
     fig.savefig(figname, bbox_inches="tight")
 
-def loss_plot(train_loss, valid_loss, filename):
+def loss_plot(train_loss, valid_loss, filename, patience, kernel):
     #Loss during the training process
     fig = plt.figure(figsize=(10,8))
     plt.plot(range(1, len(train_loss)+1), train_loss, label="Training Loss")
@@ -291,10 +298,17 @@ def loss_plot(train_loss, valid_loss, filename):
     plt.legend()
     plt.tight_layout()
     plt.show()
-    figname = filename + "_loss_plot.png" 
-    fig.savefig(figname, bbox_inches="tight")
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    current_path = os.path.join(current_path, "TestPlots/")
+    patience = "Patience" + str(patience) +"/"
+    patience_folder = os.path.join(current_path, patience)
+    kernel = "Kernel" + str(kernel) + "/"
+    kernel_folder = os.path.join(patience_folder, kernel)
+    figname = filename + "_loss_plot.png"
+    save_plot = os.path.join(kernel_folder, figname)
+    fig.savefig(save_plot, bbox_inches="tight")
 
-def sample_test(model, test_loader, filename):
+def sample_test(model, test_loader, filename, patience, kernel):
     for images, labels in test_loader:
         break
 
@@ -310,7 +324,14 @@ def sample_test(model, test_loader, filename):
                                       str(labels[idx].item())),
                                       color=("g" if preds[idx]==labels[idx] else "r"))
     plt.show()
-    figname = filename + "_sample_test_plot.png" 
-    fig.savefig(figname, bbox_inches="tight")
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    current_path = os.path.join(current_path, "TestPlots/")
+    patience = "Patience" + str(patience) +"/"
+    patience_folder = os.path.join(current_path, patience)
+    kernel = "Kernel" + str(kernel) + "/"
+    kernel_folder = os.path.join(patience_folder, kernel)
+    figname = filename + "_sample_test_plot.png"
+    save_plot = os.path.join(kernel_folder, figname)
+    fig.savefig(save_plot, bbox_inches="tight")
 
     
