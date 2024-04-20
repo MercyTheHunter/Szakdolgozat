@@ -102,16 +102,31 @@ def CATDOG_make_loaders(batch_size):
     torch.manual_seed(42)
 
     valid_size = 0.2 #The percentage of training set to use as validation
-    transform = transforms.ToTensor()
 
-    train_data = datasets.STL10(root='../Data',
-                                split="train", 
-                                download=True, 
-                                transform=transform)
-    test_data = datasets.STL10(root='../Data', 
-                               split="test", 
-                               download=True, 
-                               transform=transform)
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    data = os.path.join(current_path, "Data/CATS_DOGS")
+
+    train_transform = transforms.Compose([
+        transforms.RandomRotation(10),      # rotate +/- 10 degrees
+        transforms.RandomHorizontalFlip(),  # reverse 50% of images
+        transforms.Resize(224),             # resize shortest side to 224 pixels
+        transforms.CenterCrop(224),         # crop longest side to 224 pixels at center
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406],
+                             [0.229, 0.224, 0.225])
+    ])
+
+    test_transform = transforms.Compose([
+        transforms.Resize(224),             # resize shortest side to 224 pixels
+        transforms.CenterCrop(224),         # crop longest side to 224 pixels at center
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406],
+                             [0.229, 0.224, 0.225])
+    ])
+
+    train_data = datasets.ImageFolder(os.path.join(data, 'train'), transform=train_transform)
+    test_data = datasets.ImageFolder(os.path.join(data, 'test'), transform=test_transform)
+
     #Obtain the indices from the training set that will be used for validation
     num_train = len(train_data)
     indices = list(range(num_train))
@@ -133,7 +148,9 @@ def CATDOG_make_loaders(batch_size):
     test_loader = DataLoader(test_data,
                              batch_size=batch_size)
     
-    return train_loader, valid_loader, test_loader
+    class_names = train_data.classes
+
+    return train_loader, valid_loader, test_loader, class_names
 
 def count_parameters(model):
     params = [p.numel() for p in model.parameters()]

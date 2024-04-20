@@ -5,11 +5,12 @@ import torch.nn.functional as F
 ##############################################################
 #   2D Convolutional Neural Networks
 ##############################################################
+
 class Conv_NN_small(nn.Module):
     def __init__(self):
         super(Conv_NN_small, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, stride=1)
-        self.fc1 = nn.Linear(13*13*32,256)  #kernel:3 -> 13*13*32; kernel:5 -> 12*12*32; kernel:7 -> 11*11*32
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5, stride=1)
+        self.fc1 = nn.Linear(12*12*32,256)  #kernel:3 -> 13*13*32; kernel:5 -> 12*12*32; kernel:7 -> 11*11*32
         self.fc2 = nn.Linear(256,10)
         self.dropout = nn.Dropout(0.5)
 
@@ -32,9 +33,9 @@ class Conv_NN_small(nn.Module):
 class Conv_NN_medium(nn.Module):
     def __init__(self):
         super(Conv_NN_medium, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=1, out_channels=16, kernel_size=3, stride=1) #28 x 28 x 1 -> 26 x 26 x 16 -> 13 x 13 x 16
-        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1) #13 x 13 x 16 -> 11 x 11 x 32 -> 5 x 5 x 32
-        self.fc1 = nn.Linear(5*5*32,256)    #kernel:3 -> 5*5*32; kernel:5 -> 4*4*32; kernel:7 -> 2*2*32
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=16, kernel_size=5, stride=1) #28 x 28 x 1 -> 26 x 26 x 16 -> 13 x 13 x 16
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=5, stride=1) #13 x 13 x 16 -> 11 x 11 x 32 -> 5 x 5 x 32
+        self.fc1 = nn.Linear(4*4*32,256)    #kernel:3 -> 5*5*32; kernel:5 -> 4*4*32; kernel:7 -> 2*2*32
         self.fc2 = nn.Linear(256,10)
         self.dropout = nn.Dropout(0.5)
 
@@ -119,7 +120,7 @@ class FourierLayer(nn.Module):
 class FNO_NN_small(nn.Module):
     def __init__(self):
         super(FNO_NN_small, self).__init__()
-        self.fno1 = FourierLayer(in_channels=1, out_channels=32, kernel_size=3, padding=3//2, stride=1, modes1=4, modes2=4) 
+        self.fno1 = FourierLayer(in_channels=1, out_channels=32, kernel_size=5, padding=5//2, stride=1, modes1=4, modes2=4) 
         self.fc1 = nn.Linear(14*14*32,256) #kernel:3 -> 14*14*32; kernel:5 -> 14*14*32; kernel:7 -> 14*14*32
         self.fc2 = nn.Linear(256,10)
         self.dropout = nn.Dropout(0.5)
@@ -143,8 +144,8 @@ class FNO_NN_small(nn.Module):
 class FNO_NN_medium(nn.Module):
     def __init__(self):
         super(FNO_NN_medium, self).__init__()
-        self.fno1 = FourierLayer(in_channels=1, out_channels=16, kernel_size=3, padding=3//2, stride=1, modes1=4, modes2=4) 
-        self.fno2 = FourierLayer(in_channels=16, out_channels=32, kernel_size=3, padding=3//2, stride=1, modes1=4, modes2=4) 
+        self.fno1 = FourierLayer(in_channels=1, out_channels=16, kernel_size=5, padding=5//2, stride=1, modes1=4, modes2=4) 
+        self.fno2 = FourierLayer(in_channels=16, out_channels=32, kernel_size=5, padding=5//2, stride=1, modes1=4, modes2=4) 
         self.fc1 = nn.Linear(7*7*32,256)    #kernel:3 -> 7*7*32; kernel:5 -> 7*7*32; kernel:7 -> 7*7*32
         self.fc2 = nn.Linear(256,10)
         self.dropout = nn.Dropout(0.5)
