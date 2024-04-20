@@ -10,9 +10,9 @@ class Conv_NN_small(nn.Module):
         super(Conv_NN_small, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=kernelsize, stride=1)
         if (kernelsize == 3):
-            self.fc1 = nn.Linear(13*13*32,256) #kernel:3 -> 13*13*32;
+            self.fc1 = nn.Linear(13*13*32,256) #kernel:3 -> 13*13*32
         elif (kernelsize == 5):
-            self.fc1 = nn.Linear(12*12*32,256) #kernel:5 -> 12*12*32;
+            self.fc1 = nn.Linear(12*12*32,256) #kernel:5 -> 12*12*32
         elif (kernelsize == 7):
             self.fc1 = nn.Linear(11*11*32,256) #kernel:7 -> 11*11*32
         self.fc2 = nn.Linear(256,classes)
@@ -40,9 +40,9 @@ class Conv_NN_medium(nn.Module):
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=16, kernel_size=kernelsize, stride=1) #28 x 28 x 1 -> 26 x 26 x 16 -> 13 x 13 x 16
         self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=kernelsize, stride=1) #13 x 13 x 16 -> 11 x 11 x 32 -> 5 x 5 x 32
         if (kernelsize == 3):
-            self.fc1 = nn.Linear(5*5*32,256) #kernel:3 -> 5*5*32;
+            self.fc1 = nn.Linear(5*5*32,256) #kernel:3 -> 5*5*32
         elif (kernelsize == 5):
-            self.fc1 = nn.Linear(4*4*32,256) #kernel:5 -> 4*4*32;
+            self.fc1 = nn.Linear(4*4*32,256) #kernel:5 -> 4*4*32
         elif (kernelsize == 7):
             self.fc1 = nn.Linear(2*2*32,256) #kernel:7 -> 2*2*32
         self.fc2 = nn.Linear(256,classes)
@@ -56,6 +56,55 @@ class Conv_NN_medium(nn.Module):
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.conv2(x)
+        x = F.relu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = x.view(batch_size, -1)
+
+        x = self.fc1(x)
+        x = F.relu(x)
+        x = self.dropout(x)
+
+        x = self.fc2(x)
+
+        return x
+class Conv_NN_big(nn.Module):
+    def __init__(self, kernelsize, classes):
+        super(Conv_NN_medium, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=2, kernel_size=kernelsize, stride=1) #224 x 224 x 1 -> 222 x 222 x 2 -> 111 x 111 x 2
+        self.conv2 = nn.Conv2d(in_channels=2, out_channels=4, kernel_size=kernelsize, stride=1) #111 x 111 x 2 -> 109 x 109 x 4 -> 54 x 54 x 4
+        self.conv3 = nn.Conv2d(in_channels=4, out_channels=8, kernel_size=kernelsize, stride=1) #54 x 54 x 4 -> 52 x 52 x 8 -> 26 x 26 x 8
+        self.conv4 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=kernelsize, stride=1) #26 x 26 x 8 -> 24 x 24 x 16 -> 12 x 12 x 16
+        self.conv5 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=kernelsize, stride=1) #12 x 12 x 16 -> 10 x 10 x 32 -> 5 x 5 x 32
+        if (kernelsize == 3):
+            self.fc1 = nn.Linear(5*5*32,256) #kernel:3 -> 5*5*32
+        elif (kernelsize == 5):
+            self.fc1 = nn.Linear(4*4*32,256) #kernel:5 -> 3*3*32
+        elif (kernelsize == 7):
+            self.fc1 = nn.Linear(1*1*32,256) #kernel:7 -> 1*1*32
+        self.fc2 = nn.Linear(256,classes)
+        self.dropout = nn.Dropout(0.5)
+
+    def forward(self, x):
+        batch_size = x.shape[0]
+
+        x = self.conv1(x)
+        x = F.relu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = self.conv2(x)
+        x = F.relu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = self.conv3(x)
+        x = F.relu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = self.conv4(x)
+        x = F.relu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = self.conv5(x)
         x = F.relu(x)
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
@@ -174,6 +223,50 @@ class FNO_NN_medium(nn.Module):
 
         x = self.fc1(x)
         x = F.gelu(x)
+        x = self.dropout(x)
+
+        x = self.fc2(x)
+
+        return x
+class FNO_NN_big(nn.Module):
+    def __init__(self, kernelsize, classes):
+        super(FNO_NN_big, self).__init__()
+        self.fno1 = FourierLayer(in_channels=1, out_channels=2, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
+        self.fno2 = FourierLayer(in_channels=2, out_channels=4, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
+        self.fno3 = FourierLayer(in_channels=4, out_channels=8, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
+        self.fno4 = FourierLayer(in_channels=8, out_channels=16, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
+        self.fno5 = FourierLayer(in_channels=16, out_channels=32, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
+        self.fc1 = nn.Linear(5*5*32,256) #(?x?x32,256)
+        self.fc2 = nn.Linear(256,classes)
+        self.dropout = nn.Dropout(0.5)
+
+    def forward(self, x):
+        batch_size = x.shape[0]
+
+        x = self.fno1(x)
+        x = F.gelu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = self.fno2(x)
+        x = F.gelu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = self.fno3(x)
+        x = F.gelu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = self.fno4(x)
+        x = F.gelu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = self.fno5(x)
+        x = F.gelu(x)
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+
+        x = x.view(batch_size, -1)
+
+        x = self.fc1(x)
+        x = F.relu(x)
         x = self.dropout(x)
 
         x = self.fc2(x)

@@ -301,6 +301,26 @@ def example_plot(train_loader, dataset):
     figname = dataset + "_example_plot.png"
     fig.savefig(figname, bbox_inches="tight")
 
+def CATDOG_example_plot(train_loader, dataset):
+    np.set_printoptions(formatter=dict(int=lambda x: f"{x:4}"))
+    
+    for images,labels in train_loader:
+        break
+
+    images = images.numpy()
+
+    inv_normalize = transforms.Normalize( mean=[-0.485/0.229, -0.456/0.224, -0.406/0.225],
+                                          std=[1/0.229, 1/0.224, 1/0.225])
+    images_inv = inv_normalize(images)
+
+    fig = plt.figure(figsize=(25,4))
+    for idx in np.arange(10):
+        ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
+        ax.imshow(np.transpose(im_inv.numpy(), (1, 2, 0)))
+    plt.show()
+    figname = dataset + "_example_plot.png"
+    fig.savefig(figname, bbox_inches="tight")
+
 def loss_plot(train_loss, valid_loss, filename, patience, kernel):
     #Loss during the training process
     fig = plt.figure(figsize=(10,8))
