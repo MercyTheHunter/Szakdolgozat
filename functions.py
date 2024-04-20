@@ -98,7 +98,7 @@ def FashionMNIST_make_loaders(batch_size):
     
     return train_loader, valid_loader, test_loader
 
-def STL10_make_loaders(batch_size):
+def CATDOG_make_loaders(batch_size):
     torch.manual_seed(42)
 
     valid_size = 0.2 #The percentage of training set to use as validation

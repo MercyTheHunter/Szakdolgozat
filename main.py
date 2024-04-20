@@ -6,15 +6,15 @@ dataset = "MNIST"
 #dataset = "FashionMNIST"
 #dataset = "STL10"
 
-filename = dataset + "_CNN_small"
+#filename = dataset + "_CNN_small"
 #filename = dataset + "_CNN_medium"
 #filename = dataset + "_FNN_small"
-#filename = dataset + "_FNN_medium"
+filename = dataset + "_FNN_medium"
 
-savedmodelname = dataset + "_CNN_small.pkl"
+#savedmodelname = dataset + "_CNN_small.pkl"
 #savedmodelname = dataset + "_CNN_medium.pkl"
 #savedmodelname = dataset + "_FNN_small.pkl"
-#savedmodelname = dataset + "_FNN_medium.pkl"
+savedmodelname = dataset + "_FNN_medium.pkl"
 
 current_path = os.path.dirname(os.path.realpath(__file__))
 patience = 3 #3 or 5 or 7 (for save location)
@@ -39,10 +39,10 @@ if os.path.isfile(os.path.join(current_path, "SavedModels/", savedmodelname)):
     print("Loading the saved model...")
     model = func.load_model(savedmodelname)
 else:
-    model = m.Conv_NN_small()
+    #model = m.Conv_NN_small()
     #model = m.Conv_NN_medium()
     #model = m.FNO_NN_small()
-    #model = m.FNO_NN_medium()
+    model = m.FNO_NN_medium()
 
     print(f"Training the {savedmodelname} model on the {dataset} dataset")
 
