@@ -3,14 +3,14 @@ import functions as func
 import os
 
 #Base parameters
-patience = 5 #3 or 5 or 7 training parameter (also used for save location)
-kernel = 7 #3 or 5 or 7 model parameter (also used for save location)
-model = 4 #1:CNN_small, 2:CNN_medium, 3:FNN_small, 4:FNN_medium
+patience = 7 #3 or 5 or 7 training parameter (also used for save location)
+kernel = 5 #3 or 5 or 7 model parameter (also used for save location)
+model = 1 #1:CNN_small, 2:CNN_medium, 3:FNN_small, 4:FNN_medium
 classes = 10 #MNIST: 10, FashionMNIST: 10, CATDOG: 2
 current_path = os.path.dirname(os.path.realpath(__file__))
 
-#dataset = "MNIST"
-dataset = "FashionMNIST"
+dataset = "MNIST"
+#dataset = "FashionMNIST"
 #dataset = "CATDOG"
 
 if model == 1:
