@@ -316,7 +316,7 @@ def CATDOG_example_plot(train_loader, dataset):
     fig = plt.figure(figsize=(25,4))
     for idx in np.arange(10):
         ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
-        ax.imshow(np.transpose(im_inv.numpy(), (1, 2, 0)))
+        ax.imshow(np.transpose(images_inv.numpy(), (1, 2, 0)))
     plt.show()
     figname = dataset + "_example_plot.png"
     fig.savefig(figname, bbox_inches="tight")
