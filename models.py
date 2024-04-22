@@ -8,8 +8,8 @@ import torch.nn.functional as F
 class Conv_NN_small(nn.Module):
     def __init__(self, kernelsize, classes, im_size):
         super(Conv_NN_small, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=kernelsize, stride=1) #28 x 28 x 1 -> 26 x 26 x 32
-        self.fc1 = nn.Linear((im_size - (kernelsize - 1))*(im_size - (kernelsize - 1))*32,256) #k:3 -> 13*13*32, k: 5 -> 12*12*32, k:7 -> 11*11*32
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=kernelsize, stride=1)
+        self.fc1 = nn.Linear(((im_size - (kernelsize - 1))//2)*((im_size - (kernelsize - 1))//2)*32,256)
         self.fc2 = nn.Linear(256,classes)
         self.dropout = nn.Dropout(0.5)
 
