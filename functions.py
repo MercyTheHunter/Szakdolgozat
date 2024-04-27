@@ -175,11 +175,16 @@ def train_model(model, train_loader, valid_loader, patience, n_epochs):
     early_stopping = EarlyStopping(patience=patience, verbose=True)
 
     for epoch in range(1, n_epochs + 1):
-
+        
         model.train() #Prepare the model for training
         for batch, (data, target) in enumerate(train_loader, 1):
-
+            
             optimizer.zero_grad() #Clear the gradients (Clear optimized parameters)
+            
+            if torch.cuda.is_available():
+                data, target = data.to(device), target.to(device) #Copy data to training device
+                model.to(device) #Copy the model onto the training device
+
             output = model(data) #Forward pass (Calculate predicted outputs)
             loss = criterion(output, target) #Calculate the loss
             loss.backward() #Backward pass (Calculate the gradient of the loss)
@@ -188,6 +193,11 @@ def train_model(model, train_loader, valid_loader, patience, n_epochs):
         
         model.eval() #Prepare the model for evaluation
         for data, target in valid_loader:
+
+            if torch.cuda.is_available():
+                data, target = data.to(device), target.to(device) #Copy data to training device
+                model.to(device) #Copy the model onto the training device
+
             output = model(data) #Forward pass (Calculate predicted outputs)
             loss = criterion(output, target) #Calculate the loss
             valid_losses.append(loss.item()) #Store validation loss
@@ -200,7 +210,7 @@ def train_model(model, train_loader, valid_loader, patience, n_epochs):
         avg_train_losses.append(train_loss)
         avg_valid_losses.append(valid_loss)
         
-                #Print training and validation statistics
+        #Print training and validation statistics
         epoch_len = len(str(n_epochs))
         print_msg = (f"[{epoch:>{epoch_len}}/{n_epochs:>{epoch_len}}] " +
                      f"train_loss: {train_loss:.5f} " +
@@ -226,7 +236,7 @@ def train_model(model, train_loader, valid_loader, patience, n_epochs):
 
     return model, avg_train_losses, avg_valid_losses
 
-def evaluate_model(model, test_loader, batch_size):
+def evaluate_model(model, test_loader, batch_size, classes):
     torch.manual_seed(42)
 
     criterion = nn.CrossEntropyLoss()
@@ -240,6 +250,11 @@ def evaluate_model(model, test_loader, batch_size):
     class_total = list(0. for i in range(10))
 
     for data, target in test_loader:
+
+        if torch.cuda.is_available():
+            data, target = data.to(device), target.to(device) #Copy data to training device
+            model.to(device) #Copy the model onto the training device
+
         if len(target.data) != batch_size:
             break
         output = model(data) #Forward pass (Calculate predicted outs)
@@ -255,7 +270,7 @@ def evaluate_model(model, test_loader, batch_size):
     test_loss = test_loss / len(test_loader.dataset)
     print("Test Loss: {:.6f}\n".format(test_loss))
 
-    for i in range(10):
+    for i in range(classes):
         if class_total[i] > 0:
             print("Test Accuracy of %5s: %2d%% (%2d/%2d)" % (
                 str(i), 100 * class_correct[i] / class_total[i],
@@ -290,34 +305,39 @@ def example_plot(train_loader, dataset):
 
     for images, labels in train_loader:
         break
-
-    images = images.numpy()
-
-    fig = plt.figure(figsize=(25,4))
-    for idx in np.arange(10):
-        ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
-        ax.imshow(np.squeeze(images[idx]), cmap="gray")
-    plt.show()
-    figname = dataset + "_example_plot.png"
-    fig.savefig(figname, bbox_inches="tight")
-
-def CATDOG_example_plot(train_loader, dataset):
-    np.set_printoptions(formatter=dict(int=lambda x: f"{x:4}"))
     
-    for images,labels in train_loader:
-        break
+    if dataset == "CATDOG":
+        im = make_grid(images, nrow=5)
 
-    images = images.numpy()
-
-    inv_normalize = transforms.Normalize( mean=[-0.485/0.229, -0.456/0.224, -0.406/0.225],
+        inv_normalize = transforms.Normalize( mean=[-0.485/0.229, -0.456/0.224, -0.406/0.225],
                                           std=[1/0.229, 1/0.224, 1/0.225])
-    images_inv = inv_normalize(images)
+        test_transform = transforms.Compose([
+                         transforms.Resize(224),             # resize shortest side to 224 pixels
+                         transforms.CenterCrop(224),         # crop longest side to 224 pixels at center
+                         transforms.ToTensor(),
+                         transforms.Normalize([0.485, 0.456, 0.406],
+                                              [0.229, 0.224, 0.225])
+        ])
 
-    fig = plt.figure(figsize=(25,4))
-    for idx in np.arange(10):
-        ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
-        ax.imshow(np.transpose(images_inv.numpy(), (1, 2, 0)))
-    plt.show()
+        current_path = os.path.dirname(os.path.realpath(__file__))
+        data = os.path.join(current_path, "Data/CATS_DOGS")
+        test_data = datasets.ImageFolder(os.path.join(data, 'test'), transform=test_transform)
+
+        fig = plt.figure(figsize=(25,4))
+        for idx in np.arange(10):
+            ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
+            im = inv_normalize(test_data[idx][0])
+            ax.imshow(np.transpose(im.numpy(),(1, 2, 0)))
+        plt.show()
+    else:
+        images = images.numpy()
+
+        fig = plt.figure(figsize=(25,4))
+        for idx in np.arange(10):
+            ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
+            ax.imshow(np.squeeze(images[idx]), cmap="gray")
+        plt.show()
+    
     figname = dataset + "_example_plot.png"
     fig.savefig(figname, bbox_inches="tight")
 
@@ -349,22 +369,55 @@ def loss_plot(train_loss, valid_loss, filename, patience, kernel):
     save_plot = os.path.join(kernel_folder, figname)
     fig.savefig(save_plot, bbox_inches="tight")
 
-def sample_test(model, test_loader, filename, patience, kernel):
+def sample_test(model, test_loader, filename, patience, kernel, dataset):
     for images, labels in test_loader:
         break
 
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    if torch.cuda.is_available():
+        images = images.to(device)
+        model.to(device)
+
     output = model(images)
     _, preds = torch.max(output, 1)
-    images = images.numpy()
 
-    fig = plt.figure(figsize=(25,4))
-    for idx in np.arange(20):
-        ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
-        ax.imshow(np.squeeze(images[idx]), cmap="gray")
-        ax.set_title("{} ({})".format(str(preds[idx].item()),
-                                      str(labels[idx].item())),
-                                      color=("g" if preds[idx]==labels[idx] else "r"))
-    plt.show()
+    images = images.detach().cpu().numpy()
+
+    if dataset == "CATDOG":
+        inv_normalize = transforms.Normalize( mean=[-0.485/0.229, -0.456/0.224, -0.406/0.225],
+                                          std=[1/0.229, 1/0.224, 1/0.225])
+    
+        test_transform = transforms.Compose([
+                         transforms.Resize(224),             # resize shortest side to 224 pixels
+                         transforms.CenterCrop(224),         # crop longest side to 224 pixels at center
+                         transforms.ToTensor(),
+                         transforms.Normalize([0.485, 0.456, 0.406],
+                                              [0.229, 0.224, 0.225])
+        ])
+
+        current_path = os.path.dirname(os.path.realpath(__file__))
+        data = os.path.join(current_path, "Data/CATS_DOGS")
+        test_data = datasets.ImageFolder(os.path.join(data, 'test'), transform=test_transform)
+
+        fig = plt.figure(figsize=(25,4))
+        for idx in np.arange(20):
+            ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
+            im = inv_normalize(test_data[idx][0])
+            ax.imshow(np.transpose(im.numpy(),(1, 2, 0)))
+            ax.set_title("{} ({})".format(str(preds[idx].item()),
+                                          str(labels[idx].item())),
+                                          color=("g" if preds[idx]==labels[idx] else "r"))
+        plt.show()
+    else:
+        fig = plt.figure(figsize=(25,4))
+        for idx in np.arange(20):
+            ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
+            ax.imshow(np.squeeze(images[idx]), cmap="gray")
+            ax.set_title("{} ({})".format(str(preds[idx].item()),
+                                        str(labels[idx].item())),
+                                        color=("g" if preds[idx]==labels[idx] else "r"))
+        plt.show()
     current_path = os.path.dirname(os.path.realpath(__file__))
     current_path = os.path.join(current_path, "TestPlots/")
     patience = "Patience" + str(patience) +"/"
@@ -374,5 +427,3 @@ def sample_test(model, test_loader, filename, patience, kernel):
     figname = filename + "_sample_test_plot.png"
     save_plot = os.path.join(kernel_folder, figname)
     fig.savefig(save_plot, bbox_inches="tight")
-
-    

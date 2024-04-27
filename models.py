@@ -6,10 +6,12 @@ import torch.nn.functional as F
 #   2D Convolutional Neural Networks
 ##############################################################
 class Conv_NN_small(nn.Module):
-    def __init__(self, kernelsize, classes, im_size):
+    def __init__(self, kernelsize, classes, im_size, in_channels):
         super(Conv_NN_small, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=kernelsize, stride=1)
-        self.fc1 = nn.Linear(((im_size - (kernelsize - 1))//2)*((im_size - (kernelsize - 1))//2)*32,256)
+        fc_in = im_size
+        self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=32, kernel_size=kernelsize, stride=1)
+        fc_in = (fc_in - (kernelsize - 1))//2
+        self.fc1 = nn.Linear(fc_in*fc_in*32,256)
         self.fc2 = nn.Linear(256,classes)
         self.dropout = nn.Dropout(0.5)
 
@@ -30,16 +32,14 @@ class Conv_NN_small(nn.Module):
 
         return x
 class Conv_NN_medium(nn.Module):
-    def __init__(self, kernelsize, classes):
+    def __init__(self, kernelsize, classes, im_size, in_channels):
         super(Conv_NN_medium, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=1, out_channels=16, kernel_size=kernelsize, stride=1) #28 x 28 x 1 -> 26 x 26 x 16 -> 13 x 13 x 16
-        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=kernelsize, stride=1) #13 x 13 x 16 -> 11 x 11 x 32 -> 5 x 5 x 32
-        if (kernelsize == 3):
-            self.fc1 = nn.Linear(5*5*32,256) #kernel:3 -> 5*5*32
-        elif (kernelsize == 5):
-            self.fc1 = nn.Linear(4*4*32,256) #kernel:5 -> 4*4*32
-        elif (kernelsize == 7):
-            self.fc1 = nn.Linear(2*2*32,256) #kernel:7 -> 2*2*32
+        fc_in = im_size
+        self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=16, kernel_size=kernelsize, stride=1)
+        fc_in = (fc_in - (kernelsize - 1))//2
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=kernelsize, stride=1)
+        fc_in = (fc_in - (kernelsize - 1))//2
+        self.fc1 = nn.Linear(fc_in*fc_in*32,256)
         self.fc2 = nn.Linear(256,classes)
         self.dropout = nn.Dropout(0.5)
 
@@ -64,19 +64,20 @@ class Conv_NN_medium(nn.Module):
 
         return x
 class Conv_NN_big(nn.Module):
-    def __init__(self, kernelsize, classes):
-        super(Conv_NN_medium, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=1, out_channels=2, kernel_size=kernelsize, stride=1) #224 x 224 x 1 -> 222 x 222 x 2 -> 111 x 111 x 2
-        self.conv2 = nn.Conv2d(in_channels=2, out_channels=4, kernel_size=kernelsize, stride=1) #111 x 111 x 2 -> 109 x 109 x 4 -> 54 x 54 x 4
-        self.conv3 = nn.Conv2d(in_channels=4, out_channels=8, kernel_size=kernelsize, stride=1) #54 x 54 x 4 -> 52 x 52 x 8 -> 26 x 26 x 8
-        self.conv4 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=kernelsize, stride=1) #26 x 26 x 8 -> 24 x 24 x 16 -> 12 x 12 x 16
-        self.conv5 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=kernelsize, stride=1) #12 x 12 x 16 -> 10 x 10 x 32 -> 5 x 5 x 32
-        if (kernelsize == 3):
-            self.fc1 = nn.Linear(5*5*32,256) #kernel:3 -> 5*5*32
-        elif (kernelsize == 5):
-            self.fc1 = nn.Linear(4*4*32,256) #kernel:5 -> 3*3*32
-        elif (kernelsize == 7):
-            self.fc1 = nn.Linear(1*1*32,256) #kernel:7 -> 1*1*32
+    def __init__(self, kernelsize, classes, im_size, in_channels):
+        super(Conv_NN_big, self).__init__()
+        fc_in = im_size
+        self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=2, kernel_size=kernelsize, stride=1)
+        fc_in = (fc_in - (kernelsize - 1))//2
+        self.conv2 = nn.Conv2d(in_channels=2, out_channels=4, kernel_size=kernelsize, stride=1)
+        fc_in = (fc_in - (kernelsize - 1))//2
+        self.conv3 = nn.Conv2d(in_channels=4, out_channels=8, kernel_size=kernelsize, stride=1)
+        fc_in = (fc_in - (kernelsize - 1))//2
+        self.conv4 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=kernelsize, stride=1)
+        fc_in = (fc_in - (kernelsize - 1))//2
+        self.conv5 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=kernelsize, stride=1)
+        fc_in = (fc_in - (kernelsize - 1))//2
+        self.fc1 = nn.Linear(fc_in*fc_in*32,256)
         self.fc2 = nn.Linear(256,classes)
         self.dropout = nn.Dropout(0.5)
 
@@ -171,10 +172,12 @@ class FourierLayer(nn.Module):
 #   Neural Networks Using the 2D Fourier Layer - Fourier Neural Operator
 ###########################################################################
 class FNO_NN_small(nn.Module):
-    def __init__(self, kernelsize, classes):
+    def __init__(self, kernelsize, classes, im_size, in_channels):
         super(FNO_NN_small, self).__init__()
-        self.fno1 = FourierLayer(in_channels=1, out_channels=32, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4) 
-        self.fc1 = nn.Linear(14*14*32,256)
+        fc_in = im_size
+        self.fno1 = FourierLayer(in_channels=in_channels, out_channels=32, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4) 
+        fc_in = fc_in//2
+        self.fc1 = nn.Linear(fc_in*fc_in*32,256)
         self.fc2 = nn.Linear(256,classes)
         self.dropout = nn.Dropout(0.5)
 
@@ -195,11 +198,14 @@ class FNO_NN_small(nn.Module):
 
         return x
 class FNO_NN_medium(nn.Module):
-    def __init__(self, kernelsize, classes):
+    def __init__(self, kernelsize, classes, im_size, in_channels):
         super(FNO_NN_medium, self).__init__()
-        self.fno1 = FourierLayer(in_channels=1, out_channels=16, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4) 
-        self.fno2 = FourierLayer(in_channels=16, out_channels=32, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4) 
-        self.fc1 = nn.Linear(7*7*32,256)
+        fc_in = im_size
+        self.fno1 = FourierLayer(in_channels=in_channels, out_channels=16, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
+        fc_in = fc_in//2
+        self.fno2 = FourierLayer(in_channels=16, out_channels=32, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
+        fc_in = fc_in//2
+        self.fc1 = nn.Linear(fc_in*fc_in*32,256)
         self.fc2 = nn.Linear(256,classes)
         self.dropout = nn.Dropout(0.5)
 
@@ -224,14 +230,20 @@ class FNO_NN_medium(nn.Module):
 
         return x
 class FNO_NN_big(nn.Module):
-    def __init__(self, kernelsize, classes):
+    def __init__(self, kernelsize, classes, im_size, in_channels):
         super(FNO_NN_big, self).__init__()
-        self.fno1 = FourierLayer(in_channels=1, out_channels=2, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
+        fc_in = im_size
+        self.fno1 = FourierLayer(in_channels=in_channels, out_channels=2, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
+        fc_in = fc_in//2
         self.fno2 = FourierLayer(in_channels=2, out_channels=4, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
+        fc_in = fc_in//2
         self.fno3 = FourierLayer(in_channels=4, out_channels=8, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
+        fc_in = fc_in//2
         self.fno4 = FourierLayer(in_channels=8, out_channels=16, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
+        fc_in = fc_in//2
         self.fno5 = FourierLayer(in_channels=16, out_channels=32, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
-        self.fc1 = nn.Linear(5*5*32,256) #(?x?x32,256)
+        fc_in = fc_in//2
+        self.fc1 = nn.Linear(fc_in*fc_in*32,256)
         self.fc2 = nn.Linear(256,classes)
         self.dropout = nn.Dropout(0.5)
 
