@@ -7,6 +7,7 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from torchvision import datasets, transforms
 from torchvision.utils import make_grid
 from pytorchtools import EarlyStopping
+import models as m
 
 import joblib
 import numpy as np
@@ -20,93 +21,40 @@ from sklearn.model_selection import cross_val_score
 #from yellowbrick.classifier import ClassPredictionError
 #from yellowbrick.classifier import ROCAUC
 
-def MNIST_make_loaders(batch_size):
+def make_loaders(batch_size, dataset):
     torch.manual_seed(42)
 
     current_path = os.path.dirname(os.path.realpath(__file__))
     data = os.path.join(current_path, "Data/")
+
     valid_size = 0.2 #The percentage of training set to use as validation
-    transform = transforms.ToTensor()
-
-    train_data = datasets.MNIST(root=data,
-                                train=True, 
-                                download=True, 
-                                transform=transform)
-    test_data = datasets.MNIST(root=data, 
-                               train=False, 
-                               download=True, 
-                               transform=transform)
-    #Obtain the indices from the training set that will be used for validation
-    num_train = len(train_data)
-    indices = list(range(num_train))
-    np.random.shuffle(indices)
-    split = int(np.floor(valid_size * num_train))
-    train_idx, valid_idx = indices[split:], indices[:split]
-
-    #Define the samplers to obtaiun the training and validation batches
-    train_sampler = SubsetRandomSampler(train_idx)
-    valid_sampler = SubsetRandomSampler(valid_idx)
-
-
-    train_loader = DataLoader(train_data,
-                              batch_size=batch_size,
-                              sampler=train_sampler)
-    valid_loader = DataLoader(train_data,
-                              batch_size=batch_size,
-                              sampler=valid_sampler)
-    test_loader = DataLoader(test_data,
-                             batch_size=batch_size)
     
-    return train_loader, valid_loader, test_loader
-
-def FashionMNIST_make_loaders(batch_size):
-    torch.manual_seed(42)
-
-    current_path = os.path.dirname(os.path.realpath(__file__))
-    data = os.path.join(current_path, "Data/")
-    valid_size = 0.2 #The percentage of training set to use as validation
-    transform = transforms.ToTensor()
-
-    train_data = datasets.FashionMNIST(root=data,
-                                train=True, 
-                                download=True, 
-                                transform=transform)
-    test_data = datasets.FashionMNIST(root=data, 
-                               train=False, 
-                               download=True, 
-                               transform=transform)
-    #Obtain the indices from the training set that will be used for validation
-    num_train = len(train_data)
-    indices = list(range(num_train))
-    np.random.shuffle(indices)
-    split = int(np.floor(valid_size * num_train))
-    train_idx, valid_idx = indices[split:], indices[:split]
-
-    #Define the samplers to obtaiun the training and validation batches
-    train_sampler = SubsetRandomSampler(train_idx)
-    valid_sampler = SubsetRandomSampler(valid_idx)
-
-
-    train_loader = DataLoader(train_data,
-                              batch_size=batch_size,
-                              sampler=train_sampler)
-    valid_loader = DataLoader(train_data,
-                              batch_size=batch_size,
-                              sampler=valid_sampler)
-    test_loader = DataLoader(test_data,
-                             batch_size=batch_size)
+    if dataset == "MNIST":
     
-    return train_loader, valid_loader, test_loader
+        transform = transforms.ToTensor()
 
-def CATDOG_make_loaders(batch_size):
-    torch.manual_seed(42)
+        train_data = datasets.MNIST(root=data,
+                                    train=True, 
+                                    download=True, 
+                                    transform=transform)
+        
+        test_data = datasets.MNIST(root=data, 
+                                   train=False, 
+                                   download=True, 
+                                   transform=transform)
+    elif dataset == "FashionMNIST":
+        transform = transforms.ToTensor()
 
-    valid_size = 0.2 #The percentage of training set to use as validation
-
-    current_path = os.path.dirname(os.path.realpath(__file__))
-    data = os.path.join(current_path, "Data/CATS_DOGS")
-
-    train_transform = transforms.Compose([
+        train_data = datasets.FashionMNIST(root=data,
+                                           train=True, 
+                                           download=True, 
+                                           transform=transform)
+        test_data = datasets.FashionMNIST(root=data, 
+                                          train=False, 
+                                          download=True, 
+                                          transform=transform)
+    elif dataset == "CATDOG":
+        train_transform = transforms.Compose([
         transforms.RandomRotation(10),      # rotate +/- 10 degrees
         transforms.RandomHorizontalFlip(),  # reverse 50% of images
         transforms.Resize(224),             # resize shortest side to 224 pixels
@@ -114,19 +62,19 @@ def CATDOG_make_loaders(batch_size):
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406],
                              [0.229, 0.224, 0.225])
-    ])
+        ])
 
-    test_transform = transforms.Compose([
-        transforms.Resize(224),             # resize shortest side to 224 pixels
-        transforms.CenterCrop(224),         # crop longest side to 224 pixels at center
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406],
-                             [0.229, 0.224, 0.225])
-    ])
+        test_transform = transforms.Compose([
+            transforms.Resize(224),             # resize shortest side to 224 pixels
+            transforms.CenterCrop(224),         # crop longest side to 224 pixels at center
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406],
+                                [0.229, 0.224, 0.225])
+        ])
 
-    train_data = datasets.ImageFolder(os.path.join(data, 'train'), transform=train_transform)
-    test_data = datasets.ImageFolder(os.path.join(data, 'test'), transform=test_transform)
-
+        train_data = datasets.ImageFolder(os.path.join(data, 'CATS_DOGS/train'), transform=train_transform)
+        test_data = datasets.ImageFolder(os.path.join(data, 'CATS_DOGS/test'), transform=test_transform)
+    
     #Obtain the indices from the training set that will be used for validation
     num_train = len(train_data)
     indices = list(range(num_train))
@@ -151,6 +99,25 @@ def CATDOG_make_loaders(batch_size):
     class_names = train_data.classes
 
     return train_loader, valid_loader, test_loader, class_names
+
+def set_data_params(data):
+    if data == 1:
+        dataset = "MNIST"
+        classes = 10
+        im_size = 28
+        in_channels = 1
+    elif data == 2:
+        dataset = "FashionMNIST"
+        classes = 10
+        im_size = 28
+        in_channels = 1
+    elif data == 3:
+        dataset = "CATDOG"
+        classes = 2
+        im_size = 224
+        in_channels = 3
+
+    return dataset, classes, im_size, in_channels
 
 def count_parameters(model):
     params = [p.numel() for p in model.parameters()]
@@ -281,6 +248,8 @@ def evaluate_model(model, test_loader, batch_size, classes):
     print("\nTest Accuracy (Overall): %2d%% (%2d/%2d)" % (
         100. * np.sum(class_correct) / np.sum(class_total),
         np.sum(class_correct), np.sum(class_total)))
+    
+    print(f"\nEvaluation completed in {time.time()-start_time} seconds\n")
 
 def save_model(model, model_name, patience, kernel):
     current_path = os.path.dirname(os.path.realpath(__file__))
@@ -293,13 +262,70 @@ def save_model(model, model_name, patience, kernel):
     joblib.dump(model, save_model)
     print(f"Model saved as: {model_name}\n")
 
-def load_model(model_name):
+def load_model(model_name, patience, kernel):
     current_path = os.path.dirname(os.path.realpath(__file__))
-    saved_model_name = os.path.join(current_path, "SavedModels/", model_name)
-    model = joblib.load(saved_model_name)
+    current_path = os.path.join(current_path, "TestModels/")
+    patience = "Patience" + str(patience) +"/"
+    patience_folder = os.path.join(current_path, patience)
+    kernel = "Kernel" + str(kernel) + "/"
+    kernel_folder = os.path.join(patience_folder, kernel)
+    save_model = os.path.join(kernel_folder, model_name)
+    model = joblib.load(save_model)
     print(f"{model_name} has been loaded!\n")
     return model
     
+def set_model_name(model, dataset):
+    if model == 1:
+        filename = dataset + "_CNN_small"
+    elif model == 2:
+        filename = dataset + "_CNN_medium"
+    elif model == 3:
+        filename = dataset + "_CNN_big"
+    elif model == 4:
+        filename = dataset + "_FNN_small"
+    elif model == 5:
+        filename = dataset + "_FNN_medium"
+    elif model == 6:
+        filename = dataset + "_FNN_big"
+
+    savedmodelname = filename + ".pkl"
+
+    return savedmodelname, filename
+
+def set_model(modelnum, kernel, classes, im_size, in_channels):
+    if modelnum == 1:
+        model = m.Conv_NN_small(kernelsize=kernel, 
+                                classes=classes, 
+                                im_size=im_size, 
+                                in_channels=in_channels)
+    elif modelnum == 2:
+        model = m.Conv_NN_medium(kernelsize=kernel, 
+                                 classes=classes, 
+                                 im_size=im_size, 
+                                 in_channels=in_channels)
+    elif modelnum == 3:
+        model = m.Conv_NN_big(kernelsize=kernel, 
+                              classes=classes, 
+                              im_size=im_size, 
+                              in_channels=in_channels)
+    elif modelnum == 4:
+        model = m.FNO_NN_small(kernelsize=kernel, 
+                               classes=classes, 
+                               im_size=im_size, 
+                               in_channels=in_channels)
+    elif modelnum == 5:
+        model = m.FNO_NN_medium(kernelsize=kernel, 
+                                classes=classes, 
+                                im_size=im_size, 
+                                in_channels=in_channels)
+    elif modelnum == 6:
+        model = m.FNO_NN_big(kernelsize=kernel, 
+                             classes=classes, 
+                             im_size=im_size, 
+                             in_channels=in_channels)
+        
+    return model
+
 def example_plot(train_loader, dataset):
     np.set_printoptions(formatter=dict(int=lambda x: f"{x:4}"))
 
@@ -358,7 +384,7 @@ def loss_plot(train_loss, valid_loss, filename, patience, kernel):
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
-    plt.show()
+    #plt.show()
     current_path = os.path.dirname(os.path.realpath(__file__))
     current_path = os.path.join(current_path, "TestPlots/")
     patience = "Patience" + str(patience) +"/"
@@ -408,7 +434,7 @@ def sample_test(model, test_loader, filename, patience, kernel, dataset):
             ax.set_title("{} ({})".format(str(preds[idx].item()),
                                           str(labels[idx].item())),
                                           color=("g" if preds[idx]==labels[idx] else "r"))
-        plt.show()
+        #plt.show()
     else:
         fig = plt.figure(figsize=(25,4))
         for idx in np.arange(20):
@@ -417,7 +443,7 @@ def sample_test(model, test_loader, filename, patience, kernel, dataset):
             ax.set_title("{} ({})".format(str(preds[idx].item()),
                                         str(labels[idx].item())),
                                         color=("g" if preds[idx]==labels[idx] else "r"))
-        plt.show()
+        #plt.show()
     current_path = os.path.dirname(os.path.realpath(__file__))
     current_path = os.path.join(current_path, "TestPlots/")
     patience = "Patience" + str(patience) +"/"
