@@ -11,9 +11,9 @@ mode = 1 #Training: 1, Testing: 2
 
 current_path = os.path.dirname(os.path.realpath(__file__))
 
-#dataset = "MNIST"
+dataset = "MNIST"
 #dataset = "FashionMNIST"
-dataset = "CATDOG"
+#dataset = "CATDOG"
 
 if model == 1:
     filename = dataset + "_CNN_small"
