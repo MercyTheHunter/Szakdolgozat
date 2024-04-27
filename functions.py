@@ -104,20 +104,17 @@ def set_data_params(data):
     if data == 1:
         dataset = "MNIST"
         classes = 10
-        im_size = 28
         in_channels = 1
     elif data == 2:
         dataset = "FashionMNIST"
         classes = 10
-        im_size = 28
         in_channels = 1
     elif data == 3:
         dataset = "CATDOG"
         classes = 2
-        im_size = 224
         in_channels = 3
 
-    return dataset, classes, im_size, in_channels
+    return dataset, classes, in_channels
 
 def count_parameters(model):
     params = [p.numel() for p in model.parameters()]
@@ -292,36 +289,30 @@ def set_model_name(model, dataset):
 
     return savedmodelname, filename
 
-def set_model(modelnum, kernel, classes, im_size, in_channels):
+def set_model(modelnum, kernel, classes, in_channels):
     if modelnum == 1:
         model = m.Conv_NN_small(kernelsize=kernel, 
-                                classes=classes, 
-                                im_size=im_size, 
+                                classes=classes,  
                                 in_channels=in_channels)
     elif modelnum == 2:
         model = m.Conv_NN_medium(kernelsize=kernel, 
                                  classes=classes, 
-                                 im_size=im_size, 
                                  in_channels=in_channels)
     elif modelnum == 3:
         model = m.Conv_NN_big(kernelsize=kernel, 
                               classes=classes, 
-                              im_size=im_size, 
                               in_channels=in_channels)
     elif modelnum == 4:
         model = m.FNO_NN_small(kernelsize=kernel, 
                                classes=classes, 
-                               im_size=im_size, 
                                in_channels=in_channels)
     elif modelnum == 5:
         model = m.FNO_NN_medium(kernelsize=kernel, 
                                 classes=classes, 
-                                im_size=im_size, 
                                 in_channels=in_channels)
     elif modelnum == 6:
         model = m.FNO_NN_big(kernelsize=kernel, 
                              classes=classes, 
-                             im_size=im_size, 
                              in_channels=in_channels)
         
     return model

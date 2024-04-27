@@ -6,103 +6,128 @@ import torch.nn.functional as F
 #   2D Convolutional Neural Networks
 ##############################################################
 class Conv_NN_small(nn.Module):
-    def __init__(self, kernelsize, classes, im_size, in_channels):
+    def __init__(self, kernelsize, classes, in_channels):
         super(Conv_NN_small, self).__init__()
-        fc_in = im_size
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=32, kernel_size=kernelsize, stride=1)
-        fc_in = (fc_in - (kernelsize - 1))//2
-        self.fc1 = nn.Linear(fc_in*fc_in*32,256)
-        self.fc2 = nn.Linear(256,classes)
-        self.dropout = nn.Dropout(0.5)
+        self.bn1 = nn.BatchNorm2d(num_features=32)
+
+        self.ap = nn.AdaptiveAvgPool2d(1)
+
+        self.fc1 = nn.Linear(32,128)
+        self.fc2 = nn.Linear(128,classes)
 
     def forward(self, x):
         batch_size = x.shape[0]
 
         x = self.conv1(x)
         x = F.relu(x)
-        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+        x = self.bn1(x)
 
+        x = self.ap(x)
+        
         x = x.view(batch_size, -1)
 
         x = self.fc1(x)
         x = F.relu(x)
-        x = self.dropout(x)
 
         x = self.fc2(x)
 
         return x
 class Conv_NN_medium(nn.Module):
-    def __init__(self, kernelsize, classes, im_size, in_channels):
+    def __init__(self, kernelsize, classes, in_channels):
         super(Conv_NN_medium, self).__init__()
-        fc_in = im_size
+
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=16, kernel_size=kernelsize, stride=1)
-        fc_in = (fc_in - (kernelsize - 1))//2
+        self.bn1 = nn.BatchNorm2d(num_features=16)
+
         self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=kernelsize, stride=1)
-        fc_in = (fc_in - (kernelsize - 1))//2
-        self.fc1 = nn.Linear(fc_in*fc_in*32,256)
-        self.fc2 = nn.Linear(256,classes)
-        self.dropout = nn.Dropout(0.5)
+        self.bn2 = nn.BatchNorm2d(num_features=32)
+
+        self.ap = nn.AdaptiveAvgPool2d(1)
+
+        self.fc1 = nn.Linear(32,128)
+        self.fc2 = nn.Linear(128,classes)
+
 
     def forward(self, x):
         batch_size = x.shape[0]
 
         x = self.conv1(x)
         x = F.relu(x)
+        x = self.bn1(x)
+        
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.conv2(x)
         x = F.relu(x)
-        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+        x = self.bn2(x)
+
+        x = self.ap(x)
 
         x = x.view(batch_size, -1)
 
         x = self.fc1(x)
         x = F.relu(x)
-        x = self.dropout(x)
 
         x = self.fc2(x)
 
         return x
 class Conv_NN_big(nn.Module):
-    def __init__(self, kernelsize, classes, im_size, in_channels):
+    def __init__(self, kernelsize, classes, in_channels):
         super(Conv_NN_big, self).__init__()
-        fc_in = im_size
+
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=2, kernel_size=kernelsize, stride=1)
-        fc_in = (fc_in - (kernelsize - 1))//2
+        self.bn1 = nn.BatchNorm2d(num_features=2)
+
         self.conv2 = nn.Conv2d(in_channels=2, out_channels=4, kernel_size=kernelsize, stride=1)
-        fc_in = (fc_in - (kernelsize - 1))//2
+        self.bn2 = nn.BatchNorm2d(num_features=4)
+
         self.conv3 = nn.Conv2d(in_channels=4, out_channels=8, kernel_size=kernelsize, stride=1)
-        fc_in = (fc_in - (kernelsize - 1))//2
+        self.bn3 = nn.BatchNorm2d(num_features=8)
+
         self.conv4 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=kernelsize, stride=1)
-        fc_in = (fc_in - (kernelsize - 1))//2
+        self.bn4 = nn.BatchNorm2d(num_features=16)
+
         self.conv5 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=kernelsize, stride=1)
-        fc_in = (fc_in - (kernelsize - 1))//2
-        self.fc1 = nn.Linear(fc_in*fc_in*32,256)
-        self.fc2 = nn.Linear(256,classes)
-        self.dropout = nn.Dropout(0.5)
+        self.bn5 = nn.BatchNorm2d(num_features=32)
+
+        self.ap = nn.AdaptiveAvgPool2d(1)
+
+        self.fc1 = nn.Linear(32,128)
+        self.fc2 = nn.Linear(128,classes)
 
     def forward(self, x):
         batch_size = x.shape[0]
 
         x = self.conv1(x)
         x = F.relu(x)
+        x = self.bn1(x)
+        
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.conv2(x)
         x = F.relu(x)
+        x = self.bn2(x)
+        
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.conv3(x)
         x = F.relu(x)
+        x = self.bn3(x)
+        
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.conv4(x)
         x = F.relu(x)
+        x = self.bn4(x)
+        
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.conv5(x)
         x = F.relu(x)
-        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+        x = self.bn5(x)
+        
+        x = self.ap(x)
 
         x = x.view(batch_size, -1)
 
@@ -172,109 +197,130 @@ class FourierLayer(nn.Module):
 #   Neural Networks Using the 2D Fourier Layer - Fourier Neural Operator
 ###########################################################################
 class FNO_NN_small(nn.Module):
-    def __init__(self, kernelsize, classes, im_size, in_channels):
+    def __init__(self, kernelsize, classes, in_channels):
         super(FNO_NN_small, self).__init__()
-        fc_in = im_size
         self.fno1 = FourierLayer(in_channels=in_channels, out_channels=32, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4) 
-        fc_in = fc_in//2
-        self.fc1 = nn.Linear(fc_in*fc_in*32,256)
-        self.fc2 = nn.Linear(256,classes)
-        self.dropout = nn.Dropout(0.5)
+        self.bn1 = nn.BatchNorm2d(num_features=32)
+
+        self.ap = nn.AdaptiveAvgPool2d(1)
+
+        self.fc1 = nn.Linear(32,128)
+        self.fc2 = nn.Linear(128,classes)
 
     def forward(self, x):
         batch_size = x.shape[0]
 
         x = self.fno1(x)
         x = F.gelu(x)
-        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+        x = self.bn1(x)
+
+        x = self.ap(x)
 
         x = x.view(batch_size, -1)
 
         x = self.fc1(x)
         x = F.gelu(x)
-        x = self.dropout(x)
 
         x = self.fc2(x)
 
         return x
 class FNO_NN_medium(nn.Module):
-    def __init__(self, kernelsize, classes, im_size, in_channels):
+    def __init__(self, kernelsize, classes, in_channels):
         super(FNO_NN_medium, self).__init__()
-        fc_in = im_size
         self.fno1 = FourierLayer(in_channels=in_channels, out_channels=16, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
-        fc_in = fc_in//2
+        self.bn1 = nn.BatchNorm2d(num_features=16)
+
         self.fno2 = FourierLayer(in_channels=16, out_channels=32, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
-        fc_in = fc_in//2
-        self.fc1 = nn.Linear(fc_in*fc_in*32,256)
-        self.fc2 = nn.Linear(256,classes)
-        self.dropout = nn.Dropout(0.5)
+        self.bn2 = nn.BatchNorm2d(num_features=32)
+
+        self.ap = nn.AdaptiveAvgPool2d(1)
+
+        self.fc1 = nn.Linear(32,128)
+        self.fc2 = nn.Linear(128,classes)
 
     def forward(self, x):
         batch_size = x.shape[0]
 
         x = self.fno1(x)
         x = F.gelu(x)
+        x = self.bn1(x)
+
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.fno2(x)
         x = F.gelu(x)
-        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+        x = self.bn2(x)
+
+        x = self.ap(x)
 
         x = x.view(batch_size, -1)
 
         x = self.fc1(x)
         x = F.gelu(x)
-        x = self.dropout(x)
 
         x = self.fc2(x)
 
         return x
 class FNO_NN_big(nn.Module):
-    def __init__(self, kernelsize, classes, im_size, in_channels):
+    def __init__(self, kernelsize, classes, in_channels):
         super(FNO_NN_big, self).__init__()
-        fc_in = im_size
         self.fno1 = FourierLayer(in_channels=in_channels, out_channels=2, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
-        fc_in = fc_in//2
+        self.bn1 = nn.BatchNorm2d(num_features=2)
+
         self.fno2 = FourierLayer(in_channels=2, out_channels=4, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
-        fc_in = fc_in//2
+        self.bn2 = nn.BatchNorm2d(num_features=4)
+
         self.fno3 = FourierLayer(in_channels=4, out_channels=8, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
-        fc_in = fc_in//2
+        self.bn3 = nn.BatchNorm2d(num_features=8)
+
         self.fno4 = FourierLayer(in_channels=8, out_channels=16, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
-        fc_in = fc_in//2
+        self.bn4 = nn.BatchNorm2d(num_features=16)
+
         self.fno5 = FourierLayer(in_channels=16, out_channels=32, kernel_size=kernelsize, padding=kernelsize//2, stride=1, modes1=4, modes2=4)
-        fc_in = fc_in//2
-        self.fc1 = nn.Linear(fc_in*fc_in*32,256)
-        self.fc2 = nn.Linear(256,classes)
-        self.dropout = nn.Dropout(0.5)
+        self.bn5 = nn.BatchNorm2d(num_features=32)
+
+        self.ap = nn.AdaptiveAvgPool2d(1)
+
+        self.fc1 = nn.Linear(32,128)
+        self.fc2 = nn.Linear(128,classes)
 
     def forward(self, x):
         batch_size = x.shape[0]
 
         x = self.fno1(x)
         x = F.gelu(x)
+        x = self.bn1(x)
+
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.fno2(x)
         x = F.gelu(x)
+        x = self.bn2(x)
+
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.fno3(x)
         x = F.gelu(x)
+        x = self.bn3(x)
+
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.fno4(x)
         x = F.gelu(x)
+        x = self.bn4(x)
+
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.fno5(x)
         x = F.gelu(x)
-        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+        x = self.bn5(x)
+
+        x = self.ap(x)
 
         x = x.view(batch_size, -1)
 
         x = self.fc1(x)
-        x = F.relu(x)
-        x = self.dropout(x)
+        x = F.gelu(x)
 
         x = self.fc2(x)
 

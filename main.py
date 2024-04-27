@@ -2,10 +2,10 @@ import functions as func
 import os
 
 #Base parameters
-patiences = {3,5,7} #3 or 5 or 7 training parameter (also used for save location)
-kernels = {3,5,7} #3 or 5 or 7 model parameter (also used for save location)
+patiences = {3} #3 or 5 or 7 training parameter (also used for save location)
+kernels = {3} #3 or 5 or 7 model parameter (also used for save location)
 models = {1,2,4,5} #1:CNN_small, 2:CNN_medium, 3:CNN_big, 4:FNN_small, 5:FNN_medium, 6:FNN_big
-datasets = {1,2,3} #1: MNIST, 2: FashionMNIST, 3: CATDOG
+datasets = {1} #1: MNIST, 2: FashionMNIST, 3: CATDOG
 
 mode = 1 #Training: 1, Testing: 2
 
@@ -14,7 +14,7 @@ current_path = os.path.dirname(os.path.realpath(__file__))
 for data in datasets:
 
     #Setting base data parameters
-    dataset, classes, im_size, in_channels = func.set_data_params(data)
+    dataset, classes, in_channels = func.set_data_params(data)
 
     #Loading the dataset + Plot of example images
     train_loader, valid_loader, test_loader, class_names = func.make_loaders(batch_size=128, 
@@ -26,8 +26,8 @@ for data in datasets:
         #Set the current model name for saving
         savedmodelname, filename = func.set_model_name(model=modelnum,
                                                        dataset=dataset)
-        for kernel in kernels:
-            for patience in patiences:
+        for patience in patiences:
+            for kernel in kernels:
                 #Loading a trained model or training a new one
                 if mode == 2:
                     print("Testing saved models...")
@@ -40,7 +40,6 @@ for data in datasets:
                     model = func.set_model(modelnum=modelnum,
                                            kernel=kernel,
                                            classes=classes,
-                                           im_size=im_size,
                                            in_channels=in_channels)
 
                     print(f"Training the {savedmodelname} model on the {dataset} dataset")
