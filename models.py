@@ -20,7 +20,7 @@ class Conv_NN_small(nn.Module):
         batch_size = x.shape[0]
 
         x = self.conv1(x)
-        x = F.relu(x)
+        x = F.gelu(x)
         x = self.bn1(x)
 
         x = self.ap(x)
@@ -28,7 +28,7 @@ class Conv_NN_small(nn.Module):
         x = x.view(batch_size, -1)
 
         x = self.fc1(x)
-        x = F.relu(x)
+        x = F.gelu(x)
 
         x = self.fc2(x)
 
@@ -53,13 +53,13 @@ class Conv_NN_medium(nn.Module):
         batch_size = x.shape[0]
 
         x = self.conv1(x)
-        x = F.relu(x)
+        x = F.gelu(x)
         x = self.bn1(x)
         
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.conv2(x)
-        x = F.relu(x)
+        x = F.gelu(x)
         x = self.bn2(x)
 
         x = self.ap(x)
@@ -67,7 +67,7 @@ class Conv_NN_medium(nn.Module):
         x = x.view(batch_size, -1)
 
         x = self.fc1(x)
-        x = F.relu(x)
+        x = F.gelu(x)
 
         x = self.fc2(x)
 
@@ -100,31 +100,31 @@ class Conv_NN_big(nn.Module):
         batch_size = x.shape[0]
 
         x = self.conv1(x)
-        x = F.relu(x)
+        x = F.gelu(x)
         x = self.bn1(x)
         
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.conv2(x)
-        x = F.relu(x)
+        x = F.gelu(x)
         x = self.bn2(x)
         
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.conv3(x)
-        x = F.relu(x)
+        x = F.gelu(x)
         x = self.bn3(x)
         
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.conv4(x)
-        x = F.relu(x)
+        x = F.gelu(x)
         x = self.bn4(x)
         
         x = F.avg_pool2d(x, kernel_size=2, stride=2)
 
         x = self.conv5(x)
-        x = F.relu(x)
+        x = F.gelu(x)
         x = self.bn5(x)
         
         x = self.ap(x)
@@ -132,7 +132,7 @@ class Conv_NN_big(nn.Module):
         x = x.view(batch_size, -1)
 
         x = self.fc1(x)
-        x = F.relu(x)
+        x = F.gelu(x)
         x = self.dropout(x)
 
         x = self.fc2(x)

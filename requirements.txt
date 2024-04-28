@@ -1,0 +1,11 @@
+Python modules needed:
+torch
+torchvision
+torchaudio
+numpy
+pandas
+scikit-learn
+joblib
+matplotlib
+tk
+customtkinter
