@@ -133,7 +133,6 @@ class Conv_NN_big(nn.Module):
 
         x = self.fc1(x)
         x = F.gelu(x)
-        x = self.dropout(x)
 
         x = self.fc2(x)
 
