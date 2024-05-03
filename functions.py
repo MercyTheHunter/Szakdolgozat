@@ -340,10 +340,11 @@ def example_plot(train_loader, dataset):
         data = os.path.join(current_path, "Data/CATS_DOGS")
         test_data = datasets.ImageFolder(os.path.join(data, 'test'), transform=test_transform)
 
+        rand_indices = np.random.randint(low=1,high=6000,size=10)
         fig = plt.figure(figsize=(25,4))
-        for idx in np.arange(10):
-            ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
-            im = inv_normalize(test_data[idx][0])
+        for rand_idx, idx in zip(rand_indices, np.arange(10)):
+            ax = fig.add_subplot(1, 10, idx+1, xticks=[], yticks=[])
+            im = inv_normalize(test_data[rand_idx][0])
             ax.imshow(np.transpose(im.numpy(),(1, 2, 0)))
         plt.show()
     else:
@@ -351,7 +352,7 @@ def example_plot(train_loader, dataset):
 
         fig = plt.figure(figsize=(25,4))
         for idx in np.arange(10):
-            ax = fig.add_subplot(2, 10, idx+1, xticks=[], yticks=[])
+            ax = fig.add_subplot(1, 10, idx+1, xticks=[], yticks=[])
             ax.imshow(np.squeeze(images[idx]), cmap="gray")
         plt.show()
     

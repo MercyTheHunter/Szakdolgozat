@@ -2,7 +2,7 @@ import functions as func
 import os
 
 #Base parameters
-patiences = {7} #3 or 5 or 7 training parameter (also used for save location)
+patiences = {3,5,7} #3 or 5 or 7 training parameter (also used for save location)
 kernels = {3,5,7} #3 or 5 or 7 model parameter (also used for save location)
 models = {1,2,3,4,5,6} #1:CNN_small, 2:CNN_medium, 3:CNN_big, 4:FNN_small, 5:FNN_medium, 6:FNN_big
 datasets = {3} #1: MNIST, 2: FashionMNIST, 3: CATDOG
@@ -19,8 +19,8 @@ for data in datasets:
     #Loading the dataset + Plot of example images
     train_loader, valid_loader, test_loader, class_names = func.make_loaders(batch_size=128, 
                                                                              dataset=dataset)
-    #func.example_plot(train_loader=train_loader,
-    #                  dataset=dataset)
+    func.example_plot(train_loader=train_loader,
+                      dataset=dataset)
 
     for modelnum in models:
         #Set the current model name for saving
