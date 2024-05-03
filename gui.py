@@ -77,7 +77,13 @@ class App(customtkinter.CTk):
         self.image_t1_ep_M_label = customtkinter.CTkLabel(self.tabview_1.tab("MNIST"), text ="", image=self.image_t1_ep_M)
         self.image_t1_ep_M_label.grid(row=0, column=0)
         self.textbox = customtkinter.CTkTextbox(self.tabview_1.tab("MNIST"))
-        self.textbox.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.textbox.grid(row=1, column=0, padx=(200, 200), pady=(0, 20), sticky="nsew")
+        self.textbox.insert("0.0","The MNIST (Modified National Institute of Standards and Technology) dataset is " +
+                            "a large database containing handwritten digits from 0 to 9 and is commonly used for testing various models in machine learning." +
+                            "\nThese digits are black and white images that have been normalized to be 28x28 pixels." + 
+                            "\nThe dataset contains 60000 training images and 10000 testing images" +
+                            "\nAbove we can see an example of these images")
+        self.textbox.configure(state="disabled")
         
         self.tabview_1.add("FashionMNIST")
         self.tabview_1.tab("FashionMNIST").grid_columnconfigure(0, weight=1)
@@ -86,7 +92,14 @@ class App(customtkinter.CTk):
         self.image_t1_ep_F_label = customtkinter.CTkLabel(self.tabview_1.tab("FashionMNIST"), text ="", image=self.image_t1_ep_F)
         self.image_t1_ep_F_label.grid(row=0, column=0)
         self.textbox = customtkinter.CTkTextbox(self.tabview_1.tab("FashionMNIST"))
-        self.textbox.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.textbox.grid(row=1, column=0, padx=(200, 200), pady=(0, 20), sticky="nsew")
+        self.textbox.insert("0.0","The Fashion MNIST dataset is similar to the MNIST dataset, it is also" +
+                            "a large database containing different clothes ranging from trouserts to bags." +
+                            "\nThe dataset was designed to be the successor to the MNIST dataset, and similarly it's used in machine learning."
+                            "\nThese images are also black and white images that have been normalized to be 28x28 pixels." + 
+                            "\nThe dataset contains 60000 training images and 10000 testing images" +
+                            "\nAbove we can see an example of these images")
+        self.textbox.configure(state="disabled")
         
         self.tabview_1.add("CATDOG")
         self.tabview_1.tab("CATDOG").grid_columnconfigure(0, weight=1)
@@ -95,7 +108,13 @@ class App(customtkinter.CTk):
         self.image_t1_ep_C_label = customtkinter.CTkLabel(self.tabview_1.tab("CATDOG"), text ="", image=self.image_t1_ep_C)
         self.image_t1_ep_C_label.grid(row=0, column=0)
         self.textbox = customtkinter.CTkTextbox(self.tabview_1.tab("CATDOG"))
-        self.textbox.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.textbox.grid(row=1, column=0, padx=(200, 200), pady=(0, 20), sticky="nsew")
+        self.textbox.insert("0.0","The CATDOG dataset is a large database containing colorful pictures of cats and dogs." +
+                            "\nThe dataset was inspired by the famous kaggle competiton 10 years ago, where participants had to make an artificial intelligence which could decide if the given image was a cat or a dog." +
+                            "\nThese images are colored images and come in many shapes and sizes." + 
+                            "\nThe dataset contains around 19000 training images and around 6000 testing images" +
+                            "\nAbove we can see an example of these images")
+        self.textbox.configure(state="disabled")
 
         #Tabframe 2 - Training parameters
         self.tab_frame_2 = customtkinter.CTkFrame(self,corner_radius=0)
