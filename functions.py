@@ -14,12 +14,9 @@ import numpy as np
 import time
 
 import matplotlib.pyplot as plt
-from sklearn.metrics import multilabel_confusion_matrix as mcm
-from sklearn.metrics import classification_report
-from sklearn.model_selection import cross_val_score
-#from yellowbrick.classifier import ConfusionMatrix
-#from yellowbrick.classifier import ClassPredictionError
-#from yellowbrick.classifier import ROCAUC
+import seaborn as sns
+from sklearn.metrics import confusion_matrix
+
 
 def make_loaders(batch_size, dataset):
     torch.manual_seed(42)
@@ -346,7 +343,7 @@ def example_plot(train_loader, dataset):
             ax = fig.add_subplot(1, 10, idx+1, xticks=[], yticks=[])
             im = inv_normalize(test_data[rand_idx][0])
             ax.imshow(np.transpose(im.numpy(),(1, 2, 0)))
-        plt.show()
+        #plt.show()
     else:
         images = images.numpy()
 
@@ -354,7 +351,7 @@ def example_plot(train_loader, dataset):
         for idx in np.arange(10):
             ax = fig.add_subplot(1, 10, idx+1, xticks=[], yticks=[])
             ax.imshow(np.squeeze(images[idx]), cmap="gray")
-        plt.show()
+        #plt.show()
     
     figname = dataset + "_example_plot.png"
     fig.savefig(figname, bbox_inches="tight")
@@ -376,7 +373,7 @@ def loss_plot(train_loss, valid_loss, filename, patience, kernel):
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
-    #plt.show()
+    plt.show()
     current_path = os.path.dirname(os.path.realpath(__file__))
     current_path = os.path.join(current_path, "TestPlots/")
     patience = "Patience" + str(patience) +"/"
@@ -443,5 +440,40 @@ def sample_test(model, test_loader, filename, patience, kernel, dataset):
     kernel = "Kernel" + str(kernel) + "/"
     kernel_folder = os.path.join(patience_folder, kernel)
     figname = filename + "_sample_test_plot.png"
+    save_plot = os.path.join(kernel_folder, figname)
+    fig.savefig(save_plot, bbox_inches="tight")
+
+def make_confusion_matrix(model, test_loader, class_names, filename, patience, kernel, dataset):
+    test_preds = []
+    class_labels = []
+
+    for data in test_loader:
+        model.cpu() #Copy the model back to cpu
+        inputs, labels = data #Unpack the data into inputs and labels
+        output = model(inputs) #Forward pass (Calculate predicted outs)
+        _, pred = torch.max(output, 1) #Convert output probabilities to pred
+        test_preds.extend(pred.numpy()) #Store predictions
+        class_labels.extend(labels.numpy()) #Store the class labels
+
+    #Convert lists into numpy arrays
+    test_preds = np.array(test_preds)
+    class_labels = np.array(class_labels)
+    
+    conf_matrix = confusion_matrix(class_labels,test_preds)
+    
+    # Plot the confusion matrix.
+    fig = plt.figure(figsize=(10, 8))
+    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=class_names, yticklabels=class_names)
+    plt.xlabel('Predicted Label')
+    plt.ylabel('True Label')
+    plt.title('Confusion Matrix')
+    #plt.show()
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    current_path = os.path.join(current_path, "TestPlots/")
+    patience = "Patience" + str(patience) +"/"
+    patience_folder = os.path.join(current_path, patience)
+    kernel = "Kernel" + str(kernel) + "/"
+    kernel_folder = os.path.join(patience_folder, kernel)
+    figname = filename + "_confusion_matrix_plot.png"
     save_plot = os.path.join(kernel_folder, figname)
     fig.savefig(save_plot, bbox_inches="tight")

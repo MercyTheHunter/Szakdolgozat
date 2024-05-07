@@ -75,3 +75,12 @@ for data in datasets:
                                 patience=patience,
                                 kernel=kernel,
                                 dataset=dataset)
+                
+                #Plot a confusion matrix of the model on the test images
+                func.make_confusion_matrix(model=model,
+                                           test_loader=test_loader,
+                                           class_names=class_names,
+                                           filename=filename,
+                                           patience=patience,
+                                           kernel=kernel,
+                                           dataset=dataset)
