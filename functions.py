@@ -16,6 +16,7 @@ import time
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
+import imageio as iio
 
 
 def make_loaders(batch_size, dataset):
@@ -343,7 +344,7 @@ def example_plot(train_loader, dataset):
             ax = fig.add_subplot(1, 10, idx+1, xticks=[], yticks=[])
             im = inv_normalize(test_data[rand_idx][0])
             ax.imshow(np.transpose(im.numpy(),(1, 2, 0)))
-        #plt.show()
+        plt.show()
     else:
         images = images.numpy()
 
@@ -351,7 +352,7 @@ def example_plot(train_loader, dataset):
         for idx in np.arange(10):
             ax = fig.add_subplot(1, 10, idx+1, xticks=[], yticks=[])
             ax.imshow(np.squeeze(images[idx]), cmap="gray")
-        #plt.show()
+        plt.show()
     
     figname = dataset + "_example_plot.png"
     fig.savefig(figname, bbox_inches="tight")
@@ -423,7 +424,7 @@ def sample_test(model, test_loader, filename, patience, kernel, dataset):
             ax.set_title("{} ({})".format(str(preds[idx].item()),
                                           str(labels[idx].item())),
                                           color=("g" if preds[idx]==labels[idx] else "r"))
-        #plt.show()
+        plt.show()
     else:
         fig = plt.figure(figsize=(25,4))
         for idx in np.arange(20):
@@ -432,7 +433,7 @@ def sample_test(model, test_loader, filename, patience, kernel, dataset):
             ax.set_title("{} ({})".format(str(preds[idx].item()),
                                         str(labels[idx].item())),
                                         color=("g" if preds[idx]==labels[idx] else "r"))
-        #plt.show()
+        plt.show()
     current_path = os.path.dirname(os.path.realpath(__file__))
     current_path = os.path.join(current_path, "TestPlots/")
     patience = "Patience" + str(patience) +"/"
@@ -467,7 +468,7 @@ def make_confusion_matrix(model, test_loader, class_names, filename, patience, k
     plt.xlabel('Predicted Label')
     plt.ylabel('True Label')
     plt.title('Confusion Matrix')
-    #plt.show()
+    plt.show()
     current_path = os.path.dirname(os.path.realpath(__file__))
     current_path = os.path.join(current_path, "TestPlots/")
     patience = "Patience" + str(patience) +"/"
@@ -477,3 +478,25 @@ def make_confusion_matrix(model, test_loader, class_names, filename, patience, k
     figname = filename + "_confusion_matrix_plot.png"
     save_plot = os.path.join(kernel_folder, figname)
     fig.savefig(save_plot, bbox_inches="tight")
+
+def user_test(image):
+    CNN_model  = load_model("CATDOG_CNN_big.pkl",7,7)
+    FNN_model  = load_model("CATDOG_FNN_big.pkl",7,7)
+
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    image_path = os.path.join(current_path, "UserTest/", image)
+    image = iio.imread(image_path)
+    image = np.array(image)
+
+    class_names = {"CAT", "DOG"}
+    class_names = np.array(class_names)
+
+    CNN_model.eval()
+    with torch.no_grad():
+        new_pred = CNN_model(image.view(1,3,224,224)).argmax()
+    print(f'CNN: Predicted value: {new_pred.item()} {class_names[new_pred.item()]}')
+
+    FNN_model.eval()
+    with torch.no_grad():
+        new_pred = FNN_model(image.view(1,3,224,224)).argmax()
+    print(f'FNN: Predicted value: {new_pred.item()} {class_names[new_pred.item()]}')
