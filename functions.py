@@ -16,7 +16,7 @@ import time
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
-import imageio as iio
+from PIL import Image
 
 
 def make_loaders(batch_size, dataset):
@@ -479,26 +479,67 @@ def make_confusion_matrix(model, test_loader, class_names, filename, patience, k
     save_plot = os.path.join(kernel_folder, figname)
     fig.savefig(save_plot, bbox_inches="tight")
 
-def user_test(image):
+def user_test(img, class_names):
     CNN_model  = load_model("CATDOG_CNN_big.pkl",7,7)
+    CNN_model = CNN_model.to("cpu")
     FNN_model  = load_model("CATDOG_FNN_big.pkl",7,7)
+    FNN_model = FNN_model.to("cpu")
 
     current_path = os.path.dirname(os.path.realpath(__file__))
-    image_path = os.path.join(current_path, "UserTest/", image)
-    image = iio.imread(image_path)
-    image = np.array(image)
-
-    class_names = {"CAT", "DOG"}
+    img_path = os.path.join(current_path, "UserTest/", img)
+    img = Image.open(img_path)
+    
+    test_transform = transforms.Compose([
+            transforms.Resize(224),             # resize shortest side to 224 pixels
+            transforms.CenterCrop(224),         # crop longest side to 224 pixels at center
+            transforms.ToTensor()
+                                ])
+    img = test_transform(img)
     class_names = np.array(class_names)
-
-    #Still in testing phase, will become a plot for the gui in the future
+    preds = []
+    classnameidx = []
+    preds = np.array(preds)
+    classnameidx = np.array(classnameidx, dtype=int)
 
     CNN_model.eval()
     with torch.no_grad():
-        new_pred = CNN_model(image.view(1,3,224,224)).argmax()
-    print(f'CNN: Predicted value: {new_pred.item()} {class_names[new_pred.item()]}')
+        new_pred_CNN = CNN_model(img.view(1,3,224,224)).argmax()
+    if new_pred_CNN.item() == 0:
+        pred_CNN = "CAT"
+        preds = np.append(preds, pred_CNN)
+        classnameidx = np.append(classnameidx, 0)
+    else: #new_pred_CNN.item() == 1
+        pred_CNN = "DOG"
+        preds = np.append(preds, pred_CNN)
+        classnameidx = np.append(classnameidx, 1)
+    print(f'CNN:\n Predicted value: {pred_CNN}\n True Value: {class_names[new_pred_CNN.item()]}')
+    
 
     FNN_model.eval()
     with torch.no_grad():
-        new_pred = FNN_model(image.view(1,3,224,224)).argmax()
-    print(f'FNN: Predicted value: {new_pred.item()} {class_names[new_pred.item()]}')
+        new_pred_FNN = FNN_model(img.view(1,3,224,224)).argmax()
+    if new_pred_FNN.item() == 0:
+        pred_FNN = "CAT"
+        preds = np.append(preds, pred_CNN)
+        classnameidx = np.append(classnameidx, 0)
+    else: #new_pred_FNN.item() == 1
+        pred_FNN = "DOG"
+        preds = np.append(preds, pred_CNN)
+        classnameidx = np.append(classnameidx, 1)
+    print(f'FNN:\n Predicted value: {pred_FNN}\n True Value: {class_names[new_pred_FNN.item()]}')
+    preds = np.append(preds, pred_FNN)
+    classnameidx = np.append(classnameidx, new_pred_FNN.item())
+
+    fig = plt.figure(figsize=(10,4))
+    for idx in np.arange(2):
+        ax = fig.add_subplot(1, 2, idx+1, xticks=[], yticks=[])
+        ax.imshow(np.transpose(img.numpy(),(1, 2, 0)))
+        ax.set_title("{} ({})".format(str(preds[idx].item()),
+                                      str(class_names[classnameidx[idx].item()].item())),
+                                      color=("g" if preds[idx].item()==class_names[classnameidx[idx].item()].item() else "r"))
+    plt.show()
+
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    figname = "ImageTest.png"
+    save_plot = os.path.join(current_path, figname)
+    fig.savefig(save_plot, bbox_inches="tight")

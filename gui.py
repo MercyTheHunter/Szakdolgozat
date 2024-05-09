@@ -266,7 +266,7 @@ class App(customtkinter.CTk):
         #####################################################################
         ### Tab frame6 - The image test
         #####################################################################
-        self.tab_frame_6 = customtkinter.CTkFrame(self,corner_radius=0, height=self.height)
+        self.tab_frame_6 = customtkinter.CTkScrollableFrame(self,corner_radius=0, height=self.height)
         self.tab_frame_6.grid_columnconfigure(0, weight=1)
         self.tab_frame_6.grid_rowconfigure(0, weight=1)
 
@@ -279,11 +279,11 @@ class App(customtkinter.CTk):
 
         self.label = customtkinter.CTkLabel(self.tabview_6.tab("Image test"), font=("Liberation Seriff",20),
                      text="Chosen image for testing one of the models")        
-        self.label.grid(row=0, column=0)
+        self.label.grid(row=1, column=0)
 
         self.image = customtkinter.CTkImage(Image.open(os.path.join(current_path, "UserTest/11055.jpg")), size=(800, 600))
         self.image_label = customtkinter.CTkLabel(self.tabview_6.tab("Image test"), text ="", image=self.image)
-        self.image_label.grid(row=1, column=0)
+        self.image_label.grid(row=2, column=0)
 
         self.b_padding_1 = customtkinter.CTkLabel(self.tabview_6.tab("Image test"), font=("Liberation Seriff",20), text="")
         self.b_padding_1.grid(row=3, column=0)
@@ -292,7 +292,17 @@ class App(customtkinter.CTk):
         self.b_padding_3 = customtkinter.CTkLabel(self.tabview_6.tab("Image test"), font=("Liberation Seriff",20), text="")
         self.b_padding_3.grid(row=5, column=0)
 
-        
+        self.image = customtkinter.CTkImage(Image.open(os.path.join(current_path, "ImageTest.png")), size=(1000, 600))
+        self.image_label = customtkinter.CTkLabel(self.tabview_6.tab("Image test"), font=("Liberation Seriff",20), fg_color="black",
+                                                  text ="Answer from the models (Left: CNN, Right:FNN)", compound="top", image=self.image)
+        self.image_label.grid(row=6, column=0)
+
+        self.b_padding_1 = customtkinter.CTkLabel(self.tabview_6.tab("Image test"), font=("Liberation Seriff",20), text="")
+        self.b_padding_1.grid(row=7, column=0)
+        self.b_padding_2 = customtkinter.CTkLabel(self.tabview_6.tab("Image test"), font=("Liberation Seriff",20), text="")
+        self.b_padding_2.grid(row=8, column=0)
+        self.b_padding_3 = customtkinter.CTkLabel(self.tabview_6.tab("Image test"), font=("Liberation Seriff",20), text="")
+        self.b_padding_3.grid(row=9, column=0)
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
         customtkinter.set_appearance_mode(new_appearance_mode)
@@ -341,14 +351,6 @@ class App(customtkinter.CTk):
         self.tab_frame_4.grid_forget()
         self.tab_frame_5.grid_forget()
         self.tab_frame_6.grid(row=0, column=1, padx=(10, 0), pady=(10, 0), sticky="nsew")
-
-    def mousewheel(self, event):
-        global count
-        #Differentiate Windows or Linux wheel events and respond to them
-        if event.num == 5 or event.delta == -120:
-            count -= 1
-        if event.num == 4 or event.delta == 120:
-            count += 1
 
     def get_plot_path(self,current_path, patience, kernel):
         current_path = os.path.join(current_path, "TestPlots/")
