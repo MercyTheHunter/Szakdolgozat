@@ -33,14 +33,16 @@ class App(customtkinter.CTk):
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
         self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame, text="The Datasets", command=self.tab_event_1)
         self.sidebar_button_1.grid(row=1, column=0, padx=20, pady=10)
-        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, text="Small Models", command=self.tab_event_2)
+        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, text="Model Scores", command=self.tab_event_2)
         self.sidebar_button_2.grid(row=2, column=0, padx=20, pady=10)
-        self.sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, text="Medium Models", command=self.tab_event_3)
+        self.sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, text="Small Models", command=self.tab_event_3)
         self.sidebar_button_3.grid(row=3, column=0, padx=20, pady=10)
-        self.sidebar_button_4 = customtkinter.CTkButton(self.sidebar_frame, text="Large Models", command=self.tab_event_4)
+        self.sidebar_button_4 = customtkinter.CTkButton(self.sidebar_frame, text="Medium Models", command=self.tab_event_4)
         self.sidebar_button_4.grid(row=4, column=0, padx=20, pady=10)
-        self.sidebar_button_5 = customtkinter.CTkButton(self.sidebar_frame, text="Test", command=self.tab_event_5)
+        self.sidebar_button_5 = customtkinter.CTkButton(self.sidebar_frame, text="Large Models", command=self.tab_event_5)
         self.sidebar_button_5.grid(row=5, column=0, padx=20, pady=10)
+        self.sidebar_button_6 = customtkinter.CTkButton(self.sidebar_frame, text="Test", command=self.tab_event_6)
+        self.sidebar_button_6.grid(row=6, column=0, padx=20, pady=10)
         
         #Appearance and UI scaling
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
@@ -57,7 +59,7 @@ class App(customtkinter.CTk):
         self.scaling_optionemenu.set("100%")
 
         #####################################################################
-        ### Tab frames
+        ### Tab frame1 - The datasets
         #####################################################################
 
         self.tab_frame_1 = customtkinter.CTkFrame(self,corner_radius=0, height=self.height)
@@ -139,62 +141,156 @@ class App(customtkinter.CTk):
         self.b_padding_3.grid(row=5, column=0)
 
         #####################################################################
-        ### Tab frame2 - The small models
+        ### Tab frame2 - Model scores
         #####################################################################
-        self.tab_frame_2 = customtkinter.CTkScrollableFrame(self,corner_radius=0, height=self.height)
+        self.tab_frame_2 = customtkinter.CTkFrame(self,corner_radius=0, height=self.height)
         self.tab_frame_2.grid_columnconfigure(0, weight=1)
         self.tab_frame_2.grid_rowconfigure(0, weight=1)
         self.tabview_2 = customtkinter.CTkTabview(self.tab_frame_2, height=self.height)
         self.tabview_2.grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky="nsew")
-        
-        self.setup_small_model_tab_view(self.tabview_2, current_path,3,3)
-        self.setup_small_model_tab_view(self.tabview_2, current_path,3,5)
-        self.setup_small_model_tab_view(self.tabview_2, current_path,3,7)
-        self.setup_small_model_tab_view(self.tabview_2, current_path,5,3)
-        self.setup_small_model_tab_view(self.tabview_2, current_path,5,5)
-        self.setup_small_model_tab_view(self.tabview_2, current_path,5,7)
-        self.setup_small_model_tab_view(self.tabview_2, current_path,7,3)
-        self.setup_small_model_tab_view(self.tabview_2, current_path,7,5)
-        self.setup_small_model_tab_view(self.tabview_2, current_path,7,7)
 
-        #Tabframe 3 - Medium models
+        self.tabview_2.add("Patience 3")
+        self.tabview_2.tab("Patience 3").grid_columnconfigure(0, weight=1)
+        self.tabview_2.tab("Patience 3").grid_rowconfigure(0, weight=1)
+
+        self.label = customtkinter.CTkLabel(self.tabview_2.tab("Patience 3"), font=("Liberation Seriff",20),
+                     text="Overall Model scores with the Patience number being equal to 3")        
+        self.label.grid(row=0, column=0)
+
+        self.image_t2_p3 = customtkinter.CTkImage(Image.open(os.path.join(current_path, "ModelScores_P3.png")), size=(800, 600))
+        self.image_t2_p3_label = customtkinter.CTkLabel(self.tabview_2.tab("Patience 3"), text ="", image=self.image_t2_p3)
+        self.image_t2_p3_label.grid(row=1, column=0)
+
+        self.b_padding_1 = customtkinter.CTkLabel(self.tabview_2.tab("Patience 3"), font=("Liberation Seriff",20), text="")
+        self.b_padding_1.grid(row=3, column=0)
+        self.b_padding_2 = customtkinter.CTkLabel(self.tabview_2.tab("Patience 3"), font=("Liberation Seriff",20), text="")
+        self.b_padding_2.grid(row=4, column=0)
+        self.b_padding_3 = customtkinter.CTkLabel(self.tabview_2.tab("Patience 3"), font=("Liberation Seriff",20), text="")
+        self.b_padding_3.grid(row=5, column=0)
+
+        self.tabview_2.add("Patience 5")
+        self.tabview_2.tab("Patience 5").grid_columnconfigure(0, weight=1)
+        self.tabview_2.tab("Patience 5").grid_rowconfigure(0, weight=1)
+
+        self.label = customtkinter.CTkLabel(self.tabview_2.tab("Patience 5"), font=("Liberation Seriff",20),
+                     text="Overall Model scores with the Patience number being equal to 5")        
+        self.label.grid(row=0, column=0)
+
+        self.image_t2_p5 = customtkinter.CTkImage(Image.open(os.path.join(current_path, "ModelScores_P5.png")), size=(800, 600))
+        self.image_t2_p5_label = customtkinter.CTkLabel(self.tabview_2.tab("Patience 5"), text ="", image=self.image_t2_p5)
+        self.image_t2_p5_label.grid(row=1, column=0)
+
+        self.b_padding_1 = customtkinter.CTkLabel(self.tabview_2.tab("Patience 5"), font=("Liberation Seriff",20), text="")
+        self.b_padding_1.grid(row=3, column=0)
+        self.b_padding_2 = customtkinter.CTkLabel(self.tabview_2.tab("Patience 5"), font=("Liberation Seriff",20), text="")
+        self.b_padding_2.grid(row=4, column=0)
+        self.b_padding_3 = customtkinter.CTkLabel(self.tabview_2.tab("Patience 5"), font=("Liberation Seriff",20), text="")
+        self.b_padding_3.grid(row=5, column=0)
+
+        self.tabview_2.add("Patience 7")
+        self.tabview_2.tab("Patience 7").grid_columnconfigure(0, weight=1)
+        self.tabview_2.tab("Patience 7").grid_rowconfigure(0, weight=1)
+
+        self.label = customtkinter.CTkLabel(self.tabview_2.tab("Patience 7"), font=("Liberation Seriff",20),
+                     text="Overall Model scores with the Patience number being equal to 7")        
+        self.label.grid(row=0, column=0)
+
+        self.image_t2_p7 = customtkinter.CTkImage(Image.open(os.path.join(current_path, "ModelScores_P7.png")), size=(800, 600))
+        self.image_t2_p7_label = customtkinter.CTkLabel(self.tabview_2.tab("Patience 7"), text ="", image=self.image_t2_p7)
+        self.image_t2_p7_label.grid(row=1, column=0)
+
+        self.b_padding_1 = customtkinter.CTkLabel(self.tabview_2.tab("Patience 7"), font=("Liberation Seriff",20), text="")
+        self.b_padding_1.grid(row=3, column=0)
+        self.b_padding_2 = customtkinter.CTkLabel(self.tabview_2.tab("Patience 7"), font=("Liberation Seriff",20), text="")
+        self.b_padding_2.grid(row=4, column=0)
+        self.b_padding_3 = customtkinter.CTkLabel(self.tabview_2.tab("Patience 7"), font=("Liberation Seriff",20), text="")
+        self.b_padding_3.grid(row=5, column=0)
+
+        #####################################################################
+        ### Tab frame3 - The small models
+        #####################################################################
         self.tab_frame_3 = customtkinter.CTkScrollableFrame(self,corner_radius=0, height=self.height)
         self.tab_frame_3.grid_columnconfigure(0, weight=1)
         self.tab_frame_3.grid_rowconfigure(0, weight=1)
         self.tabview_3 = customtkinter.CTkTabview(self.tab_frame_3, height=self.height)
         self.tabview_3.grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky="nsew")
+        
+        self.setup_small_model_tab_view(self.tabview_3, current_path,3,3)
+        self.setup_small_model_tab_view(self.tabview_3, current_path,3,5)
+        self.setup_small_model_tab_view(self.tabview_3, current_path,3,7)
+        self.setup_small_model_tab_view(self.tabview_3, current_path,5,3)
+        self.setup_small_model_tab_view(self.tabview_3, current_path,5,5)
+        self.setup_small_model_tab_view(self.tabview_3, current_path,5,7)
+        self.setup_small_model_tab_view(self.tabview_3, current_path,7,3)
+        self.setup_small_model_tab_view(self.tabview_3, current_path,7,5)
+        self.setup_small_model_tab_view(self.tabview_3, current_path,7,7)
 
-        self.setup_medium_model_tab_view(self.tabview_3, current_path,3,3)
-        self.setup_medium_model_tab_view(self.tabview_3, current_path,3,5)
-        self.setup_medium_model_tab_view(self.tabview_3, current_path,3,7)
-        self.setup_medium_model_tab_view(self.tabview_3, current_path,5,3)
-        self.setup_medium_model_tab_view(self.tabview_3, current_path,5,5)
-        self.setup_medium_model_tab_view(self.tabview_3, current_path,5,7)
-        self.setup_medium_model_tab_view(self.tabview_3, current_path,7,3)
-        self.setup_medium_model_tab_view(self.tabview_3, current_path,7,5)
-        self.setup_medium_model_tab_view(self.tabview_3, current_path,7,7)
-
-        #Tabframe 4 - Big models
+        #####################################################################
+        ### Tab frame4 - The medium models
+        #####################################################################
         self.tab_frame_4 = customtkinter.CTkScrollableFrame(self,corner_radius=0, height=self.height)
         self.tab_frame_4.grid_columnconfigure(0, weight=1)
         self.tab_frame_4.grid_rowconfigure(0, weight=1)
         self.tabview_4 = customtkinter.CTkTabview(self.tab_frame_4, height=self.height)
         self.tabview_4.grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky="nsew")
 
-        self.setup_large_model_tab_view(self.tabview_4, current_path,3,3)
-        self.setup_large_model_tab_view(self.tabview_4, current_path,3,5)
-        self.setup_large_model_tab_view(self.tabview_4, current_path,3,7)
-        self.setup_large_model_tab_view(self.tabview_4, current_path,5,3)
-        self.setup_large_model_tab_view(self.tabview_4, current_path,5,5)
-        self.setup_large_model_tab_view(self.tabview_4, current_path,5,7)
-        self.setup_large_model_tab_view(self.tabview_4, current_path,7,3)
-        self.setup_large_model_tab_view(self.tabview_4, current_path,7,5)
-        self.setup_large_model_tab_view(self.tabview_4, current_path,7,7)
+        self.setup_medium_model_tab_view(self.tabview_4, current_path,3,3)
+        self.setup_medium_model_tab_view(self.tabview_4, current_path,3,5)
+        self.setup_medium_model_tab_view(self.tabview_4, current_path,3,7)
+        self.setup_medium_model_tab_view(self.tabview_4, current_path,5,3)
+        self.setup_medium_model_tab_view(self.tabview_4, current_path,5,5)
+        self.setup_medium_model_tab_view(self.tabview_4, current_path,5,7)
+        self.setup_medium_model_tab_view(self.tabview_4, current_path,7,3)
+        self.setup_medium_model_tab_view(self.tabview_4, current_path,7,5)
+        self.setup_medium_model_tab_view(self.tabview_4, current_path,7,7)
 
-        #Tabframe 5 - Test
-        self.tab_frame_5 = customtkinter.CTkFrame(self,corner_radius=0, height=self.height)
+        #####################################################################
+        ### Tab frame5 - The large models
+        #####################################################################
+        self.tab_frame_5 = customtkinter.CTkScrollableFrame(self,corner_radius=0, height=self.height)
         self.tab_frame_5.grid_columnconfigure(0, weight=1)
         self.tab_frame_5.grid_rowconfigure(0, weight=1)
+        self.tabview_5 = customtkinter.CTkTabview(self.tab_frame_5, height=self.height)
+        self.tabview_5.grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky="nsew")
+
+        self.setup_large_model_tab_view(self.tabview_5, current_path,3,3)
+        self.setup_large_model_tab_view(self.tabview_5, current_path,3,5)
+        self.setup_large_model_tab_view(self.tabview_5, current_path,3,7)
+        self.setup_large_model_tab_view(self.tabview_5, current_path,5,3)
+        self.setup_large_model_tab_view(self.tabview_5, current_path,5,5)
+        self.setup_large_model_tab_view(self.tabview_5, current_path,5,7)
+        self.setup_large_model_tab_view(self.tabview_5, current_path,7,3)
+        self.setup_large_model_tab_view(self.tabview_5, current_path,7,5)
+        self.setup_large_model_tab_view(self.tabview_5, current_path,7,7)
+
+        #####################################################################
+        ### Tab frame6 - The image test
+        #####################################################################
+        self.tab_frame_6 = customtkinter.CTkFrame(self,corner_radius=0, height=self.height)
+        self.tab_frame_6.grid_columnconfigure(0, weight=1)
+        self.tab_frame_6.grid_rowconfigure(0, weight=1)
+
+        self.tabview_6 = customtkinter.CTkTabview(self.tab_frame_6, height=self.height)
+        self.tabview_6.grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky="nsew")
+
+        self.tabview_6.add("Image test")
+        self.tabview_6.tab("Image test").grid_columnconfigure(0, weight=1)
+        self.tabview_6.tab("Image test").grid_rowconfigure(0, weight=1)
+
+        self.label = customtkinter.CTkLabel(self.tabview_6.tab("Image test"), font=("Liberation Seriff",20),
+                     text="Chosen image for testing one of the models")        
+        self.label.grid(row=0, column=0)
+
+        self.image = customtkinter.CTkImage(Image.open(os.path.join(current_path, "UserTest/11055.jpg")), size=(800, 600))
+        self.image_label = customtkinter.CTkLabel(self.tabview_6.tab("Image test"), text ="", image=self.image)
+        self.image_label.grid(row=1, column=0)
+
+        self.b_padding_1 = customtkinter.CTkLabel(self.tabview_6.tab("Image test"), font=("Liberation Seriff",20), text="")
+        self.b_padding_1.grid(row=3, column=0)
+        self.b_padding_2 = customtkinter.CTkLabel(self.tabview_6.tab("Image test"), font=("Liberation Seriff",20), text="")
+        self.b_padding_2.grid(row=4, column=0)
+        self.b_padding_3 = customtkinter.CTkLabel(self.tabview_6.tab("Image test"), font=("Liberation Seriff",20), text="")
+        self.b_padding_3.grid(row=5, column=0)
 
         
 
@@ -208,31 +304,51 @@ class App(customtkinter.CTk):
         self.tab_frame_3.grid_forget()
         self.tab_frame_4.grid_forget()
         self.tab_frame_5.grid_forget()
+        self.tab_frame_6.grid_forget()
         self.tab_frame_1.grid(row=0, column=1, padx=(10, 0), pady=(10, 0), sticky="nsew")
     def tab_event_2(self):
         self.tab_frame_1.grid_forget()
         self.tab_frame_3.grid_forget()
         self.tab_frame_4.grid_forget()
         self.tab_frame_5.grid_forget()
+        self.tab_frame_6.grid_forget()
         self.tab_frame_2.grid(row=0, column=1, padx=(10, 0), pady=(10, 0), sticky="nsew")
     def tab_event_3(self):
         self.tab_frame_1.grid_forget()
         self.tab_frame_2.grid_forget()
         self.tab_frame_4.grid_forget()
         self.tab_frame_5.grid_forget()
+        self.tab_frame_6.grid_forget()
         self.tab_frame_3.grid(row=0, column=1, padx=(10, 0), pady=(10, 0), sticky="nsew")
     def tab_event_4(self):
         self.tab_frame_1.grid_forget()
         self.tab_frame_2.grid_forget()
         self.tab_frame_3.grid_forget()
         self.tab_frame_5.grid_forget()
+        self.tab_frame_6.grid_forget()
         self.tab_frame_4.grid(row=0, column=1, padx=(10, 0), pady=(10, 0), sticky="nsew")
     def tab_event_5(self):
         self.tab_frame_1.grid_forget()
         self.tab_frame_2.grid_forget()
         self.tab_frame_3.grid_forget()
         self.tab_frame_4.grid_forget()
+        self.tab_frame_6.grid_forget()
         self.tab_frame_5.grid(row=0, column=1, padx=(10, 0), pady=(10, 0), sticky="nsew")
+    def tab_event_6(self):
+        self.tab_frame_1.grid_forget()
+        self.tab_frame_2.grid_forget()
+        self.tab_frame_3.grid_forget()
+        self.tab_frame_4.grid_forget()
+        self.tab_frame_5.grid_forget()
+        self.tab_frame_6.grid(row=0, column=1, padx=(10, 0), pady=(10, 0), sticky="nsew")
+
+    def mousewheel(self, event):
+        global count
+        #Differentiate Windows or Linux wheel events and respond to them
+        if event.num == 5 or event.delta == -120:
+            count -= 1
+        if event.num == 4 or event.delta == 120:
+            count += 1
 
     def get_plot_path(self,current_path, patience, kernel):
         current_path = os.path.join(current_path, "TestPlots/")

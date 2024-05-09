@@ -491,6 +491,8 @@ def user_test(image):
     class_names = {"CAT", "DOG"}
     class_names = np.array(class_names)
 
+    #Still in testing phase, will become a plot for the gui in the future
+
     CNN_model.eval()
     with torch.no_grad():
         new_pred = CNN_model(image.view(1,3,224,224)).argmax()
