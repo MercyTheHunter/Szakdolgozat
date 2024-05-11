@@ -2,12 +2,12 @@ import functions as func
 import os
 
 #Base parameters
-patiences = {7} #3 or 5 or 7 training parameter (also used for save location)
-kernels = {7} #3 or 5 or 7 model parameter (also used for save location)
-models = {3} #1:CNN_small, 2:CNN_medium, 3:CNN_big, 4:FNN_small, 5:FNN_medium, 6:FNN_big
-datasets = {3} #1: MNIST, 2: FashionMNIST, 3: CATDOG
+patiences = {3,5,7} #3 or 5 or 7 training parameter (also used for save location)
+kernels = {3,5,7} #3 or 5 or 7 model parameter (also used for save location)
+models = {1,2,4,5} #1:CNN_small, 2:CNN_medium, 3:CNN_big, 4:FNN_small, 5:FNN_medium, 6:FNN_big
+datasets = {1,2,3} #1: MNIST, 2: FashionMNIST, 3: CATDOG
 
-mode = 2 #Training: 1, Testing: 2
+mode = 1 #Training: 1, Testing: 2
 
 current_path = os.path.dirname(os.path.realpath(__file__))
 
