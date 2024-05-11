@@ -44,11 +44,11 @@ for data in datasets:
 
                     print(f"Training the {savedmodelname} model on the {dataset} dataset")
 
-                    model, train_losses, valid_losses = func.train_model(model=model,
-                                                                        train_loader=train_loader,
-                                                                        valid_loader=valid_loader,
-                                                                        patience=patience,
-                                                                        n_epochs=200)
+                    model = func.train_model(model=model,
+                                            train_loader=train_loader,
+                                            valid_loader=valid_loader,
+                                            patience=patience,
+                                            n_epochs=200)
                     func.save_model(model=model, 
                                     model_name=savedmodelname, 
                                     patience=patience, 
