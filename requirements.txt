@@ -9,4 +9,4 @@ matplotlib
 seaborn
 tk
 customtkinter
-PIL
+pillow
