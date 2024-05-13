@@ -111,6 +111,8 @@ def set_data_params(data):
         dataset = "CATDOG"
         classes = 2
         in_channels = 3
+    else:
+        raise Exception(f"The dataset number should be 1, 2 or 3. You gave ({data=})" )
 
     return dataset, classes, in_channels
 
@@ -199,6 +201,7 @@ def train_model(model, train_loader, valid_loader, patience, n_epochs):
     model.load_state_dict(torch.load('checkpoint.pt'))
 
     return model
+
 def evaluate_model(model, test_loader, batch_size, classes):
     torch.manual_seed(42)
 
@@ -248,6 +251,11 @@ def evaluate_model(model, test_loader, batch_size, classes):
     print(f"\nEvaluation completed in {time.time()-start_time} seconds\n")
 
 def save_model(model, model_name, patience, kernel):
+    if (patience != 3 and patience !=5 and patience != 7):
+        raise Exception(f"The patience number should be 3, 5 or 7. You gave ({patience=})" )
+    if (kernel != 3 and kernel != 5 and kernel != 7):
+        raise Exception(f"The kernel number should be 3, 5 or 7. You gave ({kernel=})" )
+    
     current_path = os.path.dirname(os.path.realpath(__file__))
     current_path = os.path.join(current_path, "TestModels/")
     patience = "Patience" + str(patience) +"/"
@@ -259,6 +267,11 @@ def save_model(model, model_name, patience, kernel):
     print(f"Model saved as: {model_name}\n")
 
 def load_model(model_name, patience, kernel):
+    if (patience != 3 and patience !=5 and patience != 7):
+        raise Exception(f"The patience number should be 3, 5 or 7. You gave ({patience=})" )
+    if (kernel != 3 and kernel != 5 and kernel != 7):
+        raise Exception(f"The kernel number should be 3, 5 or 7. You gave ({kernel=})" )
+    
     current_path = os.path.dirname(os.path.realpath(__file__))
     current_path = os.path.join(current_path, "TestModels/")
     patience = "Patience" + str(patience) +"/"
@@ -266,7 +279,7 @@ def load_model(model_name, patience, kernel):
     kernel = "Kernel" + str(kernel) + "/"
     kernel_folder = os.path.join(patience_folder, kernel)
     save_model = os.path.join(kernel_folder, model_name)
-    model = joblib.load(save_model)
+    model = joblib.load(save_model, mmap_mode='c')
     print(f"{model_name} has been loaded!\n")
     return model
     
@@ -283,12 +296,21 @@ def set_model_name(model, dataset):
         filename = dataset + "_FNN_medium"
     elif model == 6:
         filename = dataset + "_FNN_big"
+    else:
+        raise Exception(f"The model number ({model}) shoul be from 1 to 6. You gave ({model=})")
 
     savedmodelname = filename + ".pkl"
 
     return savedmodelname, filename
 
-def set_model(modelnum, kernel, classes, in_channels):
+def set_model(modelnum, kernel, dataset, classes, in_channels):
+    if (kernel != 3 and kernel != 5 and kernel != 7):
+        raise Exception(f"The kernel number should be 3, 5 or 7. You gave ({kernel=})" )
+    if (dataset != 1 and dataset != 2 and dataset != 3):
+        raise Exception(f"The dataset number should be 1, 2 or 3. You gave ({dataset=})" )
+    if (modelnum == 3 or modelnum == 6) and (dataset == 1 or dataset == 2):
+        raise Exception(f"Training a big model ({modelnum}) on this dataset ({dataset}) cannot be done, please choose a smaller model!")
+
     if modelnum == 1:
         model = m.Conv_NN_small(kernelsize=kernel, 
                                 classes=classes,  
@@ -313,6 +335,8 @@ def set_model(modelnum, kernel, classes, in_channels):
         model = m.FNO_NN_big(kernelsize=kernel, 
                              classes=classes, 
                              in_channels=in_channels)
+    else:
+        raise Exception(f"The model number ({modelnum}) shoul be from 1 to 6. You gave ({modelnum=})")
         
     return model
 
@@ -359,6 +383,11 @@ def example_plot(train_loader, dataset):
     fig.savefig(figname, bbox_inches="tight")
 
 def loss_plot(train_loss, valid_loss, filename, patience, kernel):
+    if (patience != 3 and patience !=5 and patience != 7):
+        raise Exception(f"The patience number should be 3, 5 or 7. You gave ({patience=})" )
+    if (kernel != 3 and kernel != 5 and kernel != 7):
+        raise Exception(f"The kernel number should be 3, 5 or 7. You gave ({kernel=})" )
+    
     #Loss during the training process
     fig = plt.figure(figsize=(10,8))
     plt.plot(range(1, len(train_loss)+1), train_loss, label="Training Loss")
@@ -387,6 +416,11 @@ def loss_plot(train_loss, valid_loss, filename, patience, kernel):
     fig.savefig(save_plot, bbox_inches="tight")
 
 def sample_test(model, test_loader, filename, patience, kernel, dataset):
+    if (patience != 3 and patience !=5 and patience != 7):
+        raise Exception(f"The patience number should be 3, 5 or 7. You gave ({patience=})" )
+    if (kernel != 3 and kernel != 5 and kernel != 7):
+        raise Exception(f"The kernel number should be 3, 5 or 7. You gave ({kernel=})" )
+    
     for images, labels in test_loader:
         break
 
@@ -446,6 +480,11 @@ def sample_test(model, test_loader, filename, patience, kernel, dataset):
     fig.savefig(save_plot, bbox_inches="tight")
 
 def make_confusion_matrix(model, test_loader, class_names, filename, patience, kernel, dataset):
+    if (patience != 3 and patience !=5 and patience != 7):
+        raise Exception(f"The patience number should be 3, 5 or 7. You gave ({patience=})" )
+    if (kernel != 3 and kernel != 5 and kernel != 7):
+        raise Exception(f"The kernel number should be 3, 5 or 7. You gave ({kernel=})" )
+    
     test_preds = []
     class_labels = []
 

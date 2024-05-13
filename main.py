@@ -29,7 +29,7 @@ for data in datasets:
         for patience in patiences:
             for kernel in kernels:
                 #Loading a trained model or training a new one
-                if mode == 2:
+                if mode == 1:
                     print("Testing saved models...")
                     print("Loading the saved model...")
                     model = func.load_model(model_name=savedmodelname,
@@ -40,7 +40,8 @@ for data in datasets:
                     model = func.set_model(modelnum=modelnum,
                                            kernel=kernel,
                                            classes=classes,
-                                           in_channels=in_channels)
+                                           in_channels=in_channels,
+                                           dataset=data)
 
                     print(f"Training the {savedmodelname} model on the {dataset} dataset")
 
