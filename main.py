@@ -13,12 +13,21 @@ current_path = os.path.dirname(os.path.realpath(__file__))
 
 for data in datasets:
 
+    if (mode !=1 and mode !=2):
+        raise Exception(f"The mode number should be 1 or 2. You gave ({mode=})")
+
     #Setting base data parameters
     dataset, classes, in_channels = func.set_data_params(data)
 
     #Loading the dataset + Plot of example images
     train_loader, valid_loader, test_loader, class_names = func.make_loaders(batch_size=128, 
                                                                              dataset=dataset)
+
+    if mode == 2:
+        image = "Cat.jpg"
+        #image = "Elephant.jpg"
+        func.user_test(image, class_names) #singular image test
+    
     func.example_plot(train_loader=train_loader,
                       dataset=dataset)
 
@@ -85,5 +94,3 @@ for data in datasets:
                                            patience=patience,
                                            kernel=kernel,
                                            dataset=dataset)
-                
-func.user_test("11055.jpg", class_names)
