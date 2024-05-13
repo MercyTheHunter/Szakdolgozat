@@ -119,6 +119,8 @@ def count_parameters(model):
     print(f"The model has {sum(params)} trainable parameters\n")
 
 def train_model(model, train_loader, valid_loader, patience, n_epochs):
+    if (patience != 3 and patience !=5 and patience != 7):
+        raise Exception(f"The patience number should be 3, 5 or 7. You gave ({patience=})" )
     torch.manual_seed(42)
 
     criterion = nn.CrossEntropyLoss()
