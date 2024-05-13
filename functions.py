@@ -200,7 +200,7 @@ def train_model(model, train_loader, valid_loader, patience, n_epochs):
     #Load the last checkpoint with the best model
     model.load_state_dict(torch.load('checkpoint.pt'))
 
-    return model
+    return model, train_losses, valid_losses
 
 def evaluate_model(model, test_loader, batch_size, classes):
     torch.manual_seed(42)

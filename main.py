@@ -5,17 +5,13 @@ import os
 patiences = {3} #3 or 5 or 7 training parameter (also used for save location)
 kernels = {3} #3 or 5 or 7 model parameter (also used for save location)
 models = {1} #1:CNN_small, 2:CNN_medium, 3:CNN_big, 4:FNN_small, 5:FNN_medium, 6:FNN_big
-datasets = {1} #1: MNIST, 2: FashionMNIST, 3: CATDOG
+datasets = {3} #1: MNIST, 2: FashionMNIST, 3: CATDOG
 
 mode = 2 #Training: 1, Testing: 2
 
 current_path = os.path.dirname(os.path.realpath(__file__))
 
 for data in datasets:
-
-    if (mode !=1 and mode !=2):
-        raise Exception(f"The mode number should be 1 or 2. You gave ({mode=})")
-
     #Setting base data parameters
     dataset, classes, in_channels = func.set_data_params(data)
 
@@ -23,9 +19,9 @@ for data in datasets:
     train_loader, valid_loader, test_loader, class_names = func.make_loaders(batch_size=128, 
                                                                              dataset=dataset)
 
-    if mode == 2:
-        image = "Cat.jpg"
-        #image = "Elephant.jpg"
+    if (mode == 2 and data == 3):
+        #image = "Cat.jpg"
+        image = "Elephant.jpg"
         func.user_test(image, class_names) #singular image test
     
     func.example_plot(train_loader=train_loader,
@@ -38,13 +34,13 @@ for data in datasets:
         for patience in patiences:
             for kernel in kernels:
                 #Loading a trained model or training a new one
-                if mode == 1:
+                if mode == 2:
                     print("Testing saved models...")
                     print("Loading the saved model...")
                     model = func.load_model(model_name=savedmodelname,
                                             kernel=kernel,
                                             patience=patience)
-                else:
+                elif mode == 1:
                     print("Training new models...")
                     model = func.set_model(modelnum=modelnum,
                                            kernel=kernel,
@@ -54,7 +50,7 @@ for data in datasets:
 
                     print(f"Training the {savedmodelname} model on the {dataset} dataset")
 
-                    model = func.train_model(model=model,
+                    model, train_losses, valid_losses = func.train_model(model=model,
                                             train_loader=train_loader,
                                             valid_loader=valid_loader,
                                             patience=patience,
@@ -68,6 +64,8 @@ for data in datasets:
                                 filename=filename,
                                 patience=patience,
                                 kernel=kernel)
+                else:
+                    raise Exception(f"The mode number should be 1 or 2. You gave ({mode=})")
 
                 #Count the parameters of the loaded or the newly trained model
                 func.count_parameters(model=model)
